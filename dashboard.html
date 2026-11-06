@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WaterWatch Dashboard, Live Campus Water Overview | Green Campus Innovation</title>
+  <meta name="description" content="Public WaterWatch dashboard: reported water issues, resolution progress, hotspot map and baseline-versus-pilot comparison for Valley View University.">
+  <link rel="canonical" href="https://greencampusinnovation.com/dashboard.html">
+  <meta property="og:title" content="WaterWatch Dashboard">
+  <meta property="og:url" content="https://greencampusinnovation.com/dashboard.html">
+  <meta name="theme-color" content="#14532D">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <script type="module" src="assets/js/pages/dashboard.js"></script>
+</head>
+<body data-page="dashboard">
+<!-- @header:start -->
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="brand" href="index.html" aria-label="Green Campus Innovation home">
+      <svg class="logo-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path d="M20 3S7 17.5 7 26a13 13 0 0 0 26 0C33 17.5 20 3 20 3Z" fill="#0891B2"/><path d="M13.5 30c0-7.5 5.2-11.6 13-12.5-.9 7.6-5.4 12.5-13 12.5Z" fill="#DCFCE7"/><path d="M13.5 30 21 22.5" stroke="#15803D" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span class="brand__text">GREEN CAMPUS<span>INNOVATION</span></span>
+    </a>
+    <button class="icon-btn nav-toggle" aria-controls="site-nav" aria-expanded="false" aria-label="Open menu"><i data-icon="menu"></i></button>
+    <nav class="nav" id="site-nav" aria-label="Main">
+      <a href="index.html" data-page="home">Home</a>
+      <a href="research.html" data-page="research">Research</a>
+      <a href="solution.html" data-page="solution">Our Solution</a>
+      <a href="implementation.html" data-page="implementation">Implementation</a>
+      <a href="feedback.html" data-page="feedback">Feedback</a>
+      <a href="dashboard.html" data-page="dashboard">WaterWatch Dashboard</a>
+      <a class="btn btn--sm" href="feedback.html#pledge"><i data-icon="heart" data-size="16"></i>Take the Pledge</a>
+    </nav>
+  </div>
+</header>
+<!-- @header:end -->
+
+<main id="main">
+  <section class="section section--white" style="padding-top:calc(var(--header-h) + 48px)">
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:28px">
+        <div>
+          <p class="hero__kicker" style="color:var(--aqua);margin-bottom:8px"><i data-icon="dashboard" data-size="16"></i>WaterWatch Dashboard</p>
+          <h1 style="font-size:clamp(1.8rem,3.5vw,2.5rem)">Campus water at a glance</h1>
+          <p class="muted" style="margin:0">Aggregated, anonymised figures. Individual reports are visible only to administrators.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn" href="solution.html#report"><i data-icon="alert" data-size="18"></i>Report a problem</a>
+          <a class="btn btn--ghost" href="admin/"><i data-icon="shield" data-size="18"></i>Team sign in</a>
+        </div>
+      </div>
+      <div id="dash-notice"></div>
+      <div class="grid grid--4" id="dash-stats"></div>
+      <div class="grid grid--4" id="dash-stats-2" style="margin-top:20px"></div>
+    </div>
+  </section>
+
+  <section class="section section--leaf" style="padding-top:48px">
+    <div class="container">
+      <div class="grid grid--3">
+        <div class="chart-card"><h3>Reports by status</h3><div class="chart-box" id="c-status" data-label="Doughnut chart of reports by status"></div></div>
+        <div class="chart-card"><h3>Reports by severity</h3><div class="chart-box" id="c-severity" data-label="Bar chart of reports by severity"></div></div>
+        <div class="chart-card"><h3>Reports by problem type</h3><div class="chart-box" id="c-type" data-label="Bar chart of reports by problem type"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--white" style="padding-top:48px">
+    <div class="container">
+      <h2 style="font-size:1.5rem">Hotspot map</h2>
+      <div class="map" id="dash-map" role="region" aria-label="Map of reported water problems"></div>
+      <div id="dash-legend"></div>
+      <h2 style="font-size:1.5rem;margin-top:48px">Baseline versus pilot</h2>
+      <p class="muted">Average daily litres for the same location and measurement method. Reductions are estimates and need at least three days in each phase.</p>
+      <div class="table-wrap" id="dash-bvp"></div>
+    </div>
+  </section>
+</main>
+
+<!-- @footer:start -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <p class="footer-tagline">Every drop counts.<br>Every action matters.</p>
+      <div class="btn-row">
+        <a class="btn btn--light" href="solution.html#report"><i data-icon="alert" data-size="18"></i>Report water wastage</a>
+        <a class="btn btn--outline-light" href="feedback.html#pledge"><i data-icon="heart" data-size="18"></i>Take the pledge</a>
+      </div>
+    </div>
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="index.html">
+          <svg class="logo-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path d="M20 3S7 17.5 7 26a13 13 0 0 0 26 0C33 17.5 20 3 20 3Z" fill="#0891B2"/><path d="M13.5 30c0-7.5 5.2-11.6 13-12.5-.9 7.6-5.4 12.5-13 12.5Z" fill="#DCFCE7"/><path d="M13.5 30 21 22.5" stroke="#15803D" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span class="brand__text">GREEN CAMPUS<span>INNOVATION</span></span>
+        </a>
+        <p>A water conservation initiative for Valley View University, Ghana, working with Estates and Facilities and the Students' Representative Council.</p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="research.html">Research</a></li>
+          <li><a href="solution.html">WaterWatch</a></li>
+          <li><a href="implementation.html">Implementation</a></li>
+          <li><a href="dashboard.html">Live dashboard</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Take part</h4>
+        <ul>
+          <li><a href="solution.html#report">Report a problem</a></li>
+          <li><a href="feedback.html#pledge">Take the pledge</a></li>
+          <li><a href="feedback.html#feedback">Send feedback</a></li>
+          <li><a href="admin/">Team sign in</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-base">
+      <span>&copy; <span data-year></span> Green Campus Innovation. WaterWatch is a proposed campus prototype, not an official university system.</span>
+      <span>Personal data is handled in line with Ghana's Data Protection Act, 2012 (Act 843).</span>
+    </div>
+  </div>
+</footer>
+<!-- @footer:end -->
+</body>
+</html>

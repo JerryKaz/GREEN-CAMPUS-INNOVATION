@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Implementation, Roadmap, Budget &amp; Savings | Green Campus Innovation</title>
+  <meta name="description" content="Six-phase implementation roadmap, budget calculator in GHS, water savings calculator, stakeholder responsibilities and change management for WaterWatch at VVU.">
+  <link rel="canonical" href="https://greencampusinnovation.com/implementation.html">
+  <meta property="og:title" content="Turning Water Conservation into a Campus-Wide Practice">
+  <meta property="og:url" content="https://greencampusinnovation.com/implementation.html">
+  <meta name="theme-color" content="#14532D">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <script type="module" src="assets/js/pages/implementation.js"></script>
+</head>
+<body data-page="implementation">
+<!-- @header:start -->
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="brand" href="index.html" aria-label="Green Campus Innovation home">
+      <svg class="logo-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path d="M20 3S7 17.5 7 26a13 13 0 0 0 26 0C33 17.5 20 3 20 3Z" fill="#0891B2"/><path d="M13.5 30c0-7.5 5.2-11.6 13-12.5-.9 7.6-5.4 12.5-13 12.5Z" fill="#DCFCE7"/><path d="M13.5 30 21 22.5" stroke="#15803D" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span class="brand__text">GREEN CAMPUS<span>INNOVATION</span></span>
+    </a>
+    <button class="icon-btn nav-toggle" aria-controls="site-nav" aria-expanded="false" aria-label="Open menu"><i data-icon="menu"></i></button>
+    <nav class="nav" id="site-nav" aria-label="Main">
+      <a href="index.html" data-page="home">Home</a>
+      <a href="research.html" data-page="research">Research</a>
+      <a href="solution.html" data-page="solution">Our Solution</a>
+      <a href="implementation.html" data-page="implementation">Implementation</a>
+      <a href="feedback.html" data-page="feedback">Feedback</a>
+      <a href="dashboard.html" data-page="dashboard">WaterWatch Dashboard</a>
+      <a class="btn btn--sm" href="feedback.html#pledge"><i data-icon="heart" data-size="16"></i>Take the Pledge</a>
+    </nav>
+  </div>
+</header>
+<!-- @header:end -->
+
+<main id="main">
+  <section class="hero hero--page">
+    <div class="hero__media" data-media="impl-hero" data-eager></div>
+    <div class="hero__shade" aria-hidden="true"></div>
+    <div class="container hero__inner">
+      <p class="hero__kicker"><i data-icon="route" data-size="16"></i>Implementation strategy</p>
+      <h1>Turning Water Conservation into a Campus Wide Practice.</h1>
+      <p class="hero__lead">A phased, low cost plan with clear owners, transparent costs and honest measurement.</p>
+    </div>
+    <div class="waterline" style="--wave:#fff"></div>
+  </section>
+
+  <section class="section section--white" aria-labelledby="roadmap-title">
+    <div class="container split">
+      <div>
+        <h2 id="roadmap-title">Six phases from research to adoption</h2>
+        <p class="lead">Each phase produces evidence the next one depends on. We only scale what the pilot shows actually works.</p>
+        <div class="frame frame--wide reveal" data-media="impl-team" style="margin-top:28px"></div>
+      </div>
+      <ol class="timeline" id="roadmap">
+        <li><span class="phase-no">1</span><div><h3>Research and baseline measurement</h3><p>Observe, interview and record at least three days of baseline readings.</p></div></li>
+        <li><span class="phase-no">2</span><div><h3>Problem analysis and ideation</h3><p>Identify root causes; apply TRIZ and SCAMPER to generate solutions.</p></div></li>
+        <li><span class="phase-no">3</span><div><h3>WaterWatch prototype development</h3><p>Build the reporting, tracking and monitoring prototype.</p></div></li>
+        <li><span class="phase-no">4</span><div><h3>Pilot implementation</h3><p>Run WaterWatch at selected locations with real users and repairs.</p></div></li>
+        <li><span class="phase-no">5</span><div><h3>Measurement and evaluation</h3><p>Compare pilot readings with baseline using the same locations and methods.</p></div></li>
+        <li><span class="phase-no">6</span><div><h3>Improvement and wider adoption</h3><p>Refine the process from feedback and recommend campus-wide rollout.</p></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--leaf" id="budget" aria-labelledby="budget-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="budget-title">Budget calculator (GHS)</h2>
+        <p class="lead">Adjust quantities and costs to explore scenarios. Your changes are not saved, and each line shows whether its cost is an estimate, a quotation or an actual cost.</p>
+      </div>
+      <div id="budget-notice"></div>
+      <div id="budget-calc"></div>
+    </div>
+  </section>
+
+  <section class="section section--white" id="savings" aria-labelledby="savings-title">
+    <div class="container split">
+      <div>
+        <h2 id="savings-title">Water savings calculator</h2>
+        <p class="lead">Compare baseline and pilot consumption for the same location and measurement method.</p>
+        <ul class="muted small" style="padding-left:18px">
+          <li>Water saved equals baseline minus pilot</li>
+          <li>Percentage reduction equals water saved divided by baseline, times 100 (not calculated when baseline is zero)</li>
+          <li>Financial savings equal water saved times a <strong>verified</strong> tariff</li>
+          <li>Annual projection only for periods of 7 days or more</li>
+        </ul>
+        <div class="notice"><i data-icon="info" data-size="18"></i><p>All results are <strong>estimates</strong>, not guaranteed savings.</p></div>
+        <div style="margin-top:16px"><button class="btn btn--ghost btn--sm" type="button" id="use-recorded" hidden><i data-icon="gauge" data-size="16"></i>Fill from recorded readings</button></div>
+      </div>
+      <div class="card">
+        <form class="form" id="savings-form" novalidate>
+          <div class="form-row">
+            <div class="field"><label for="s-baseline">Baseline consumption</label><input type="number" id="s-baseline" name="baseline" min="0" step="any" inputmode="decimal"></div>
+            <div class="field"><label for="s-pilot">Pilot consumption</label><input type="number" id="s-pilot" name="pilot" min="0" step="any" inputmode="decimal"></div>
+          </div>
+          <div class="form-row">
+            <div class="field"><label for="s-unit">Unit</label><select id="s-unit" name="unit"><option value="L">Litres (L)</option><option value="m3">Cubic metres (m³)</option></select></div>
+            <div class="field"><label for="s-period">Measurement period (days)</label><input type="number" id="s-period" name="periodDays" min="1" step="1" inputmode="numeric"><span class="hint">Same length for baseline and pilot.</span></div>
+          </div>
+          <div class="form-row">
+            <div class="field"><label for="s-tariff">Water cost per unit (GHS) <span class="opt">if verified</span></label><input type="number" id="s-tariff" name="tariff" min="0" step="any" inputmode="decimal"></div>
+            <div class="field"><label for="s-tariff-unit">Tariff unit</label><select id="s-tariff-unit" name="tariffUnit"><option value="m3">per m³</option><option value="L">per litre</option></select></div>
+          </div>
+          <label class="check"><input type="checkbox" name="tariffVerified" id="s-verified"> The tariff has been verified (e.g. from a GWCL bill or Estates/Facilities)</label>
+          <p class="small muted" id="tariff-source" hidden></p>
+        </form>
+        <div id="savings-result" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--mist" aria-labelledby="stake-title">
+    <div class="container">
+      <div class="section-head"><h2 id="stake-title">Stakeholder responsibilities</h2></div>
+      <div class="grid grid--4">
+        <div class="card stake-card"><span class="icon-tile"><i data-icon="wrench"></i></span><h3>Estates and Facilities</h3><ul class="muted small" style="padding-left:18px;margin:0"><li>Investigate reported problems</li><li>Coordinate plumbing repairs</li><li>Maintain monitoring records</li><li>Verify completed interventions</li></ul></div>
+        <div class="card stake-card"><span class="icon-tile icon-tile--aqua"><i data-icon="megaphone"></i></span><h3>Students' Representative Council</h3><ul class="muted small" style="padding-left:18px;margin:0"><li>Support student participation</li><li>Promote conservation awareness</li><li>Encourage reporting</li></ul></div>
+        <div class="card stake-card"><span class="icon-tile"><i data-icon="users"></i></span><h3>Students and staff</h3><ul class="muted small" style="padding-left:18px;margin:0"><li>Use water responsibly</li><li>Report leaks</li><li>Participate in conservation activities</li></ul></div>
+        <div class="card stake-card"><span class="icon-tile icon-tile--aqua"><i data-icon="bulb"></i></span><h3>Project team</h3><ul class="muted small" style="padding-left:18px;margin:0"><li>Develop the prototype</li><li>Document research</li><li>Analyse results</li><li>Present recommendations</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--white" aria-labelledby="change-title">
+    <div class="container">
+      <div class="section-head"><h2 id="change-title">Anticipating resistance, and responding to it</h2></div>
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Type of resistance</th><th>What it looks like</th><th>Our response</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Cognitive</strong></td><td>Users may not understand why conservation is necessary, water appears plentiful and free to them.</td><td><strong>Awareness &amp; clear communication:</strong> share baseline evidence, costs and the hotspot map in simple language through SRC channels and signage.</td></tr>
+            <tr><td><strong>Emotional</strong></td><td>Users may resist perceived inconvenience or feel blamed for waste.</td><td><strong>Reassurance &amp; framing:</strong> emphasise that we remove waste, not comfort; anonymous reporting avoids blame; involve users in designing the process.</td></tr>
+            <tr><td><strong>Behavioural</strong></td><td>Users may continue wasteful habits even when they agree with the goal.</td><td><strong>Training, feedback &amp; recognition:</strong> short sensitisation sessions, visible status updates on reports, pledges, and recognition of active reporters and halls.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- @footer:start -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <p class="footer-tagline">Every drop counts.<br>Every action matters.</p>
+      <div class="btn-row">
+        <a class="btn btn--light" href="solution.html#report"><i data-icon="alert" data-size="18"></i>Report water wastage</a>
+        <a class="btn btn--outline-light" href="feedback.html#pledge"><i data-icon="heart" data-size="18"></i>Take the pledge</a>
+      </div>
+    </div>
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="index.html">
+          <svg class="logo-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path d="M20 3S7 17.5 7 26a13 13 0 0 0 26 0C33 17.5 20 3 20 3Z" fill="#0891B2"/><path d="M13.5 30c0-7.5 5.2-11.6 13-12.5-.9 7.6-5.4 12.5-13 12.5Z" fill="#DCFCE7"/><path d="M13.5 30 21 22.5" stroke="#15803D" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span class="brand__text">GREEN CAMPUS<span>INNOVATION</span></span>
+        </a>
+        <p>A water conservation initiative for Valley View University, Ghana, working with Estates and Facilities and the Students' Representative Council.</p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="research.html">Research</a></li>
+          <li><a href="solution.html">WaterWatch</a></li>
+          <li><a href="implementation.html">Implementation</a></li>
+          <li><a href="dashboard.html">Live dashboard</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Take part</h4>
+        <ul>
+          <li><a href="solution.html#report">Report a problem</a></li>
+          <li><a href="feedback.html#pledge">Take the pledge</a></li>
+          <li><a href="feedback.html#feedback">Send feedback</a></li>
+          <li><a href="admin/">Team sign in</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-base">
+      <span>&copy; <span data-year></span> Green Campus Innovation. WaterWatch is a proposed campus prototype, not an official university system.</span>
+      <span>Personal data is handled in line with Ghana's Data Protection Act, 2012 (Act 843).</span>
+    </div>
+  </div>
+</footer>
+<!-- @footer:end -->
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "green-campus-waterwatch",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Green Campus Innovation — VVU WaterWatch (HTML/CSS/JS + Supabase)",
+  "type": "module",
+  "scripts": {
+    "dev": "npx --yes serve -l 5173 .",
+    "config": "node scripts/build-config.mjs",
+    "seed:sql": "node scripts/generate-seed.mjs",
+    "partials": "node scripts/build-partials.mjs",
+    "test": "node --test tests/"
+  },
+  "engines": { "node": ">=18" }
+}

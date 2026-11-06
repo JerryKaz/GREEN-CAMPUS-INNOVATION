@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Research, Understanding Water Wastage at VVU | Green Campus Innovation</title>
+  <meta name="description" content="Research method, baseline water measurements, campus water hotspot map and photo evidence for the VVU water conservation initiative.">
+  <link rel="canonical" href="https://greencampusinnovation.com/research.html">
+  <meta property="og:title" content="Understanding Water Wastage Across Our Campus">
+  <meta property="og:url" content="https://greencampusinnovation.com/research.html">
+  <meta name="theme-color" content="#14532D">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <script type="module" src="assets/js/pages/research.js"></script>
+</head>
+<body data-page="research">
+<!-- @header:start -->
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="brand" href="index.html" aria-label="Green Campus Innovation home">
+      <svg class="logo-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path d="M20 3S7 17.5 7 26a13 13 0 0 0 26 0C33 17.5 20 3 20 3Z" fill="#0891B2"/><path d="M13.5 30c0-7.5 5.2-11.6 13-12.5-.9 7.6-5.4 12.5-13 12.5Z" fill="#DCFCE7"/><path d="M13.5 30 21 22.5" stroke="#15803D" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span class="brand__text">GREEN CAMPUS<span>INNOVATION</span></span>
+    </a>
+    <button class="icon-btn nav-toggle" aria-controls="site-nav" aria-expanded="false" aria-label="Open menu"><i data-icon="menu"></i></button>
+    <nav class="nav" id="site-nav" aria-label="Main">
+      <a href="index.html" data-page="home">Home</a>
+      <a href="research.html" data-page="research">Research</a>
+      <a href="solution.html" data-page="solution">Our Solution</a>
+      <a href="implementation.html" data-page="implementation">Implementation</a>
+      <a href="feedback.html" data-page="feedback">Feedback</a>
+      <a href="dashboard.html" data-page="dashboard">WaterWatch Dashboard</a>
+      <a class="btn btn--sm" href="feedback.html#pledge"><i data-icon="heart" data-size="16"></i>Take the Pledge</a>
+    </nav>
+  </div>
+</header>
+<!-- @header:end -->
+
+<main id="main">
+  <section class="hero hero--page">
+    <div class="hero__media" data-media="research-hero" data-eager></div>
+    <div class="hero__shade" aria-hidden="true"></div>
+    <div class="container hero__inner">
+      <p class="hero__kicker"><i data-icon="flask" data-size="16"></i>Research and evidence</p>
+      <h1>Understanding Water Wastage Across Our Campus.</h1>
+      <p class="hero__lead">What we observed, measured and heard on campus: the evidence base for WaterWatch.</p>
+    </div>
+    <div class="waterline" style="--wave:#fff"></div>
+  </section>
+
+  <section class="section section--white">
+    <div class="container split">
+      <div>
+        <h2>How we gathered the evidence</h2>
+        <p class="lead">A mixed method approach combining direct observation, measurement and interviews, so findings rest on more than one source.</p>
+        <div class="frame frame--wide reveal" data-media="research-field" style="margin-top:28px"></div>
+      </div>
+      <ol class="timeline">
+        <li><span class="phase-no">1</span><div><h3>Observe usage and wastage</h3><p>Walk-throughs of selected campus locations to observe how water is used and where it is lost.</p></div></li>
+        <li><span class="phase-no">2</span><div><h3>Baseline measurements over three days or more</h3><p>Consistent daily readings at each location using a recorded method and unit.</p></div></li>
+        <li><span class="phase-no">3</span><div><h3>Interview Estates/Facilities staff</h3><p>Understand how problems are currently reported, prioritised and repaired.</p></div></li>
+        <li><span class="phase-no">4</span><div><h3>Interview at least five students</h3><p>Capture user experiences, habits and barriers to reporting.</p></div></li>
+        <li><span class="phase-no">5</span><div><h3>Document verified problems</h3><p>Photograph and log leaking taps, broken pipes, overflowing tanks and other confirmed issues.</p></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--leaf" aria-labelledby="findings-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="findings-title">What the research shows</h2>
+        <p class="lead">Findings are published section by section once they have been verified in the field.</p>
+      </div>
+      <div class="findings" id="findings"></div>
+    </div>
+  </section>
+
+  <section class="section section--white" aria-labelledby="baseline-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="baseline-title">Water consumption dashboard</h2>
+        <p class="muted">All charts are drawn from recorded readings. Values in m³ are converted to litres (1 m³ = 1,000 L) and baseline is only compared with pilot for the <strong>same location and measurement method</strong>.</p>
+      </div>
+      <div id="baseline-notice"></div>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+        <div class="seg" role="radiogroup" aria-label="Display unit">
+          <label><input type="radio" name="unit" value="L" checked>Litres (L)</label>
+          <label><input type="radio" name="unit" value="m3">Cubic metres (m³)</label>
+        </div>
+      </div>
+      <div class="grid grid--2">
+        <div class="chart-card"><h3>Daily water consumption</h3><div class="chart-box" id="chart-daily" data-label="Line chart of total daily water consumption"></div></div>
+        <div class="chart-card"><h3>Water readings by location</h3><div class="chart-box" id="chart-location" data-label="Bar chart of average daily consumption per location"></div></div>
+        <div class="chart-card"><h3>Reported water issues</h3><div class="chart-box" id="chart-issues" data-label="Bar chart of reported issues by category"></div></div>
+        <div class="chart-card"><h3>Baseline versus pilot results</h3><div class="chart-box" id="chart-bvp" data-label="Grouped bar chart comparing baseline and pilot averages"></div></div>
+      </div>
+      <h3 style="margin-top:40px">Measurement log</h3>
+      <div class="table-wrap table-wrap--scroll" id="readings-table" tabindex="0" aria-label="Measurement log (scrollable)"></div>
+    </div>
+  </section>
+
+  <section class="section section--mist" aria-labelledby="map-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="map-title">Campus water hotspot map</h2>
+        <p class="muted">Markers appear only for locations an administrator has added with coordinates. Report descriptions and reporter details are never shown publicly.</p>
+      </div>
+      <div id="map-notice"></div>
+      <div class="map" id="hotspot-map" role="region" aria-label="Interactive map of reported water problems"></div>
+      <div id="map-legend"></div>
+    </div>
+  </section>
+
+  <section class="section section--white" aria-labelledby="gallery-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="gallery-title">Research photo gallery</h2>
+        <p class="lead">Original photographs from the project, each with its caption, date, time, location and description.</p>
+      </div>
+      <div class="filters" id="gallery-filters" role="toolbar" aria-label="Filter photos by category"></div>
+      <div id="gallery"></div>
+    </div>
+  </section>
+
+  <section class="section section--forest" aria-labelledby="video1-title">
+    <div class="container split">
+      <div>
+        <h2 id="video1-title">Seeing the problem on campus</h2>
+        <p class="lead">A short documentary of the campus water problem: observations, interviews and the everyday experiences of students and staff.</p>
+      </div>
+      <div id="video-problem"></div>
+    </div>
+  </section>
+</main>
+
+<!-- @footer:start -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <p class="footer-tagline">Every drop counts.<br>Every action matters.</p>
+      <div class="btn-row">
+        <a class="btn btn--light" href="solution.html#report"><i data-icon="alert" data-size="18"></i>Report water wastage</a>
+        <a class="btn btn--outline-light" href="feedback.html#pledge"><i data-icon="heart" data-size="18"></i>Take the pledge</a>
+      </div>
+    </div>
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="index.html">
+          <svg class="logo-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path d="M20 3S7 17.5 7 26a13 13 0 0 0 26 0C33 17.5 20 3 20 3Z" fill="#0891B2"/><path d="M13.5 30c0-7.5 5.2-11.6 13-12.5-.9 7.6-5.4 12.5-13 12.5Z" fill="#DCFCE7"/><path d="M13.5 30 21 22.5" stroke="#15803D" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span class="brand__text">GREEN CAMPUS<span>INNOVATION</span></span>
+        </a>
+        <p>A water conservation initiative for Valley View University, Ghana, working with Estates and Facilities and the Students' Representative Council.</p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="research.html">Research</a></li>
+          <li><a href="solution.html">WaterWatch</a></li>
+          <li><a href="implementation.html">Implementation</a></li>
+          <li><a href="dashboard.html">Live dashboard</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Take part</h4>
+        <ul>
+          <li><a href="solution.html#report">Report a problem</a></li>
+          <li><a href="feedback.html#pledge">Take the pledge</a></li>
+          <li><a href="feedback.html#feedback">Send feedback</a></li>
+          <li><a href="admin/">Team sign in</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-base">
+      <span>&copy; <span data-year></span> Green Campus Innovation. WaterWatch is a proposed campus prototype, not an official university system.</span>
+      <span>Personal data is handled in line with Ghana's Data Protection Act, 2012 (Act 843).</span>
+    </div>
+  </div>
+</footer>
+<!-- @footer:end -->
+</body>
+</html>

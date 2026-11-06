@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Take the Pledge &amp; Give Feedback | Green Campus Innovation</title>
+  <meta name="description" content="Make a water conservation pledge, share feedback on WaterWatch and learn about the water conservation initiative at Valley View University.">
+  <link rel="canonical" href="https://greencampusinnovation.com/feedback.html">
+  <meta property="og:title" content="Your Actions Can Make Every Drop Count">
+  <meta property="og:url" content="https://greencampusinnovation.com/feedback.html">
+  <meta name="theme-color" content="#14532D">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <script type="module" src="assets/js/pages/feedback.js"></script>
+</head>
+<body data-page="feedback">
+<!-- @header:start -->
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="brand" href="index.html" aria-label="Green Campus Innovation home">
+      <svg class="logo-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path d="M20 3S7 17.5 7 26a13 13 0 0 0 26 0C33 17.5 20 3 20 3Z" fill="#0891B2"/><path d="M13.5 30c0-7.5 5.2-11.6 13-12.5-.9 7.6-5.4 12.5-13 12.5Z" fill="#DCFCE7"/><path d="M13.5 30 21 22.5" stroke="#15803D" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span class="brand__text">GREEN CAMPUS<span>INNOVATION</span></span>
+    </a>
+    <button class="icon-btn nav-toggle" aria-controls="site-nav" aria-expanded="false" aria-label="Open menu"><i data-icon="menu"></i></button>
+    <nav class="nav" id="site-nav" aria-label="Main">
+      <a href="index.html" data-page="home">Home</a>
+      <a href="research.html" data-page="research">Research</a>
+      <a href="solution.html" data-page="solution">Our Solution</a>
+      <a href="implementation.html" data-page="implementation">Implementation</a>
+      <a href="feedback.html" data-page="feedback">Feedback</a>
+      <a href="dashboard.html" data-page="dashboard">WaterWatch Dashboard</a>
+      <a class="btn btn--sm" href="feedback.html#pledge"><i data-icon="heart" data-size="16"></i>Take the Pledge</a>
+    </nav>
+  </div>
+</header>
+<!-- @header:end -->
+
+<main id="main">
+  <section class="hero hero--page">
+    <div class="hero__media" data-media="feedback-hero" data-eager></div>
+    <div class="hero__shade" aria-hidden="true"></div>
+    <div class="container hero__inner">
+      <p class="hero__kicker"><i data-icon="heart" data-size="16"></i>Feedback and contact</p>
+      <h1>Your Actions Can Make Every Drop Count.</h1>
+      <p class="hero__lead">Make a personal commitment, tell us what you think, and help shape a water smart campus.</p>
+    </div>
+    <div class="waterline" style="--wave:#fff"></div>
+  </section>
+
+  <section class="section section--leaf">
+    <div class="container grid grid--2" style="align-items:start">
+      <div class="card" id="pledge">
+                <h2 style="font-size:1.6rem">Take the pledge</h2>
+        <p class="muted">Choose the commitment you'll keep. Your name and email are optional.</p>
+        <form class="form" id="pledge-form" novalidate>
+          <fieldset class="field">
+            <legend>Preferred conservation commitment <span class="req">*</span></legend>
+            <div class="choice-list" id="commitments"></div>
+            <span class="field-error" data-error-for="commitment_type"></span>
+          </fieldset>
+          <div class="form-row">
+            <div class="field"><label for="p-name">Name <span class="opt">(optional)</span></label><input type="text" id="p-name" name="full_name" maxlength="120" autocomplete="name"><span class="field-error" data-error-for="full_name"></span></div>
+            <div class="field"><label for="p-email">Email <span class="opt">(optional)</span></label><input type="email" id="p-email" name="email" maxlength="160" autocomplete="email"><span class="field-error" data-error-for="email"></span></div>
+          </div>
+          <div class="field"><label for="p-dept">Department or programme <span class="opt">(optional)</span></label><input type="text" id="p-dept" name="department" maxlength="160"><span class="field-error" data-error-for="department"></span></div>
+          <div class="field"><label for="p-comments">Additional comments <span class="opt">(optional)</span></label><textarea id="p-comments" name="comments" maxlength="1000" style="min-height:90px"></textarea><span class="field-error" data-error-for="comments"></span></div>
+          <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+          <div class="field">
+            <label class="check"><input type="checkbox" name="consent_status"> <span>I agree that the project team may store this pledge to measure participation in the conservation programme, in line with the Data Protection Act, 2012 (Act 843). <span class="req">*</span></span></label>
+            <span class="field-error" data-error-for="consent_status"></span>
+          </div>
+          <div class="form-status" data-form-status role="status" aria-live="polite"></div>
+          <button class="btn btn--block" type="submit"><i data-icon="heart" data-size="18"></i>Submit my pledge</button>
+        </form>
+      </div>
+
+      <div class="card" id="feedback">
+                <h2 style="font-size:1.6rem">Share your feedback</h2>
+        <p class="muted">Ideas, concerns or experiences with WaterWatch or the pilot. To report a specific leak, <a href="solution.html#report">use the report form</a>.</p>
+        <form class="form" id="feedback-form" novalidate>
+          <div class="field"><label for="f-category">Feedback category <span class="req">*</span></label><select id="f-category" name="category"></select><span class="field-error" data-error-for="category"></span></div>
+          <div class="field"><label for="f-message">Message <span class="req">*</span></label><textarea id="f-message" name="message" maxlength="2000"></textarea><span class="field-error" data-error-for="message"></span></div>
+          <div class="form-row">
+            <div class="field"><label for="f-name">Name <span class="opt">(optional)</span></label><input type="text" id="f-name" name="contact_name" maxlength="120" autocomplete="name"><span class="field-error" data-error-for="contact_name"></span></div>
+            <div class="field"><label for="f-email">Email <span class="opt">(optional)</span></label><input type="email" id="f-email" name="contact_email" maxlength="160" autocomplete="email"><span class="field-error" data-error-for="contact_email"></span></div>
+          </div>
+          <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+          <div class="field">
+            <label class="check"><input type="checkbox" name="consent_status"> <span>I agree that the project team may store this feedback to improve the project, in line with the Data Protection Act, 2012 (Act 843). <span class="req">*</span></span></label>
+            <span class="field-error" data-error-for="consent_status"></span>
+          </div>
+          <div class="form-status" data-form-status role="status" aria-live="polite"></div>
+          <button class="btn btn--aqua btn--block" type="submit"><i data-icon="message" data-size="18"></i>Send feedback</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--white" aria-labelledby="contact-title">
+    <div class="container split">
+      <div>
+        <h2 id="contact-title">About this project</h2>
+        <p class="lead">Green Campus Innovation is a water conservation initiative at Valley View University, Ghana, hosted with Estates and Facilities and the Students' Representative Council.</p>
+        <div class="frame frame--wide reveal" data-media="feedback-side" style="margin-top:24px"></div>
+      </div>
+      <div class="card">
+        <h3><i data-icon="shield" data-size="18"></i> Your privacy</h3>
+        <ul class="muted small" style="padding-left:18px;margin:0">
+          <li>We collect only what is needed; names and emails are always optional.</li>
+          <li>Submissions are visible only to authorised project administrators.</li>
+          <li>Data is used solely for this conservation project and is not shared or sold.</li>
+          <li>To have a submission removed, use the feedback form and quote any reference you were given.</li>
+        </ul>
+        <p class="small muted" style="margin-top:12px">For official university matters, please contact the relevant Valley View University office directly.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- @footer:start -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <p class="footer-tagline">Every drop counts.<br>Every action matters.</p>
+      <div class="btn-row">
+        <a class="btn btn--light" href="solution.html#report"><i data-icon="alert" data-size="18"></i>Report water wastage</a>
+        <a class="btn btn--outline-light" href="feedback.html#pledge"><i data-icon="heart" data-size="18"></i>Take the pledge</a>
+      </div>
+    </div>
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="index.html">
+          <svg class="logo-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path d="M20 3S7 17.5 7 26a13 13 0 0 0 26 0C33 17.5 20 3 20 3Z" fill="#0891B2"/><path d="M13.5 30c0-7.5 5.2-11.6 13-12.5-.9 7.6-5.4 12.5-13 12.5Z" fill="#DCFCE7"/><path d="M13.5 30 21 22.5" stroke="#15803D" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span class="brand__text">GREEN CAMPUS<span>INNOVATION</span></span>
+        </a>
+        <p>A water conservation initiative for Valley View University, Ghana, working with Estates and Facilities and the Students' Representative Council.</p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="research.html">Research</a></li>
+          <li><a href="solution.html">WaterWatch</a></li>
+          <li><a href="implementation.html">Implementation</a></li>
+          <li><a href="dashboard.html">Live dashboard</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Take part</h4>
+        <ul>
+          <li><a href="solution.html#report">Report a problem</a></li>
+          <li><a href="feedback.html#pledge">Take the pledge</a></li>
+          <li><a href="feedback.html#feedback">Send feedback</a></li>
+          <li><a href="admin/">Team sign in</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-base">
+      <span>&copy; <span data-year></span> Green Campus Innovation. WaterWatch is a proposed campus prototype, not an official university system.</span>
+      <span>Personal data is handled in line with Ghana's Data Protection Act, 2012 (Act 843).</span>
+    </div>
+  </div>
+</footer>
+<!-- @footer:end -->
+</body>
+</html>
