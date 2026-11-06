@@ -1,0 +1,45 @@
+# Secrets: never commit real keys
+.env
+.env.*
+!.env.example
+
+# Dependencies and tooling
+node_modules/
+.npm/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build and deploy output
+dist/
+build/
+.netlify/
+.vercel/
+.wrangler/
+
+# Supabase CLI local state
+supabase/.branches/
+supabase/.temp/
+
+# Large media: keep originals out of Git; commit web-ready versions only
+assets/media/originals/
+*.mov
+*.MOV
+*.avi
+*.mkv
+
+# Editors and operating systems
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs, coverage, archives
+*.log
+coverage/
+*.zip

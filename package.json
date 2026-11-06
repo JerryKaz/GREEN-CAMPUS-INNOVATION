@@ -2,7 +2,8 @@
   "name": "green-campus-waterwatch",
   "version": "1.0.0",
   "private": true,
-  "description": "Green Campus Innovation — VVU WaterWatch (HTML/CSS/JS + Supabase)",
+  "license": "MIT",
+  "description": "Green Campus Innovation: VVU WaterWatch (HTML/CSS/JS + Supabase)",
   "type": "module",
   "scripts": {
     "dev": "npx --yes serve -l 5173 .",
