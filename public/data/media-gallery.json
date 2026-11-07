@@ -1,15 +1,4 @@
 {
-  "notice": "Gallery configuration. Add one entry per ORIGINAL project photo saved under public/images/<folder>/. Paths are relative to the site root. Categories: campus, water-hotspots, research, interviews, prototype, pilot, before-after. For before-and-after pairs give both photos the same pair_id and pair_role 'before' or 'after'.",
-  "images": [],
-  "example_entry_do_not_publish": {
-    "path": "public/images/water-hotspots/hostel-a-tap.jpg",
-    "title": "Dripping tap, Hostel A",
-    "caption": "Tap left dripping overnight during baseline observation.",
-    "date": "2026-10-06",
-    "location": "Hostel A washrooms",
-    "category": "water-hotspots",
-    "alt": "Close-up of a chrome tap with water dripping from the spout",
-    "pair_id": "",
-    "pair_role": ""
-  }
+  "notice": "Published photo gallery. Empty until the administrator uploads photos in Admin > Photos and Videos and publishes them (see README).",
+  "images": []
 }

@@ -36,7 +36,7 @@ export async function render({ db, el, can, refreshCounts }) {
   el.querySelector('[data-export]').addEventListener('click', () => downloadCSV('feedback.csv', visible, [
     { label: 'Received', key: 'submitted_at' }, { label: 'Category', value: (x) => label(FEEDBACK_CATEGORIES, x.category) },
     { label: 'Message', key: 'message' }, { label: 'Name', key: 'contact_name' }, { label: 'Email', key: 'contact_email' },
-    { label: 'Status', key: 'status' }, { label: 'Demo record', value: (x) => (x.is_demo ? 'yes' : 'no') },
+    { label: 'Status', key: 'status' }, { label: 'Old record (not fieldwork)', value: (x) => (x.is_demo ? 'yes' : 'no') },
   ]));
 
   async function setStatus(x, status) {

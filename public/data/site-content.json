@@ -1,10 +1,54 @@
 {
-  "notice": "Published site content shown to every visitor. Leave a field empty until the group has VERIFIED it. Update this file by exporting it from Admin > Data Management, then commit it.",
-  "research_findings": { "challenges": "", "processes": "", "causes": "", "experiences": "", "opportunities": "" },
-  "observations": { "days_observed": null, "period": "", "summary": "" },
-  "interviews": { "estates_count": null, "estates_summary": "", "students_count": null, "students_summary": "", "themes": "" },
-  "pilot": { "location": "", "testing_date": "", "users": null, "feedback": "", "problems": "", "improvements": "" },
-  "tariff": { "value": null, "unit": "m3", "source": "", "verified": false },
-  "roadmap": { "current_phase": 1 },
-  "contact": { "email": "", "phone": "", "office": "", "supervisor": "", "team": "" }
+  "notice": "Published website content shown to every visitor. Everything starts empty: the administrator enters it in Admin > Research Information / Website Content, then downloads this file from Admin > Data Backup > Publish to the website and replaces it here.",
+  "research": {
+    "title": "",
+    "background": "",
+    "problem": "",
+    "objectives": "",
+    "methodology": "",
+    "methodology_source": "",
+    "recommendations": "",
+    "findings": {
+      "challenges": "",
+      "processes": "",
+      "causes": "",
+      "experiences": "",
+      "opportunities": ""
+    },
+    "observations": [],
+    "interviews": [],
+    "published": {
+      "overview": false,
+      "methodology": false,
+      "findings": false,
+      "observations": false,
+      "interviews": false,
+      "recommendations": false
+    }
+  },
+  "pilot": {
+    "location": "",
+    "testing_date": "",
+    "users": null,
+    "feedback": "",
+    "problems": "",
+    "improvements": "",
+    "published": false
+  },
+  "tariff": {
+    "value": null,
+    "unit": "m3",
+    "source": "",
+    "verified": false
+  },
+  "roadmap": {
+    "current_phase": null
+  },
+  "contact": {
+    "email": "",
+    "phone": "",
+    "office": "",
+    "supervisor": "",
+    "team": ""
+  }
 }

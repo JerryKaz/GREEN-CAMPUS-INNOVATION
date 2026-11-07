@@ -8,16 +8,8 @@ export const CONFIG = {
   // Leave as-is until the domain is purchased; nothing breaks while it is a placeholder.
   SITE_URL: 'https://your-domain.example',
 
-  // Seed the browser database with clearly labelled DEMONSTRATION records the
-  // first time the site opens on a device (only when the database is empty).
-  // Set to false once the group is presenting verified data.
-  SEED_DEMO_DATA: true,
-
-  // Show demonstration records on public pages (always labelled "DEMO DATA").
-  SHOW_DEMO_DATA: true,
-
-  // Map starting position. PLACEHOLDER: this is NOT a verified campus point.
-  // Replace with the verified coordinates of the VVU campus centre.
+  // Map starting position. Replace with the verified coordinates of the VVU
+  // campus centre. (Only locations the admin marks as verified appear on the map.)
   MAP_CENTER: [5.6037, -0.187], // generic Accra placeholder
   MAP_ZOOM: 16,
   MAP_CENTER_VERIFIED: false,

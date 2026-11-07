@@ -56,6 +56,7 @@
       <div>
         <h2>How we gathered the evidence</h2>
         <p class="lead">A mixed method approach combining direct observation, measurement and interviews, so findings rest on more than one source.</p>
+        <div id="methodology-admin"></div>
         <div class="frame frame--wide reveal" data-media="research-field" style="margin-top:28px"></div>
       </div>
       <ol class="timeline">
@@ -72,61 +73,51 @@
     <div class="container">
       <div class="section-head">
         <h2 id="findings-title">What the research shows</h2>
-        <p class="lead">Findings are published section by section once they have been verified in the field.</p>
-        <p class="small muted">Labels used on this page: <span class="badge badge--verified">Verified finding</span> = published by the group from its own fieldwork. <span class="badge badge--demo">DEMO</span> = demonstration record, not research.</p>
+        <p class="lead">Observations, interviews and findings from the group's fieldwork on campus.</p>
       </div>
-      <div class="findings" id="findings"></div>
-    </div>
-  </section>
-
-  <section class="section section--white" aria-labelledby="fieldwork-title">
-    <div class="container">
-      <div class="section-head">
-        <h2 id="fieldwork-title">Observations and interviews</h2>
-        <p class="lead">Baseline observations over at least three days, and interviews with Estates/Facilities staff and at least five students.</p>
-      </div>
-      <div class="grid grid--3" id="fieldwork"></div>
+      <div id="research-content"></div>
       <div id="interview-videos" hidden></div>
     </div>
   </section>
-  <section class="section section--mist" aria-labelledby="baseline-title">
+
+  <section class="section section--white" aria-labelledby="baseline-title">
     <div class="container">
       <div class="section-head">
-        <h2 id="baseline-title">Water consumption dashboard</h2>
-        <p class="muted">All charts are drawn from recorded readings. Values in m³ are converted to litres (1 m³ = 1,000 L) and baseline is only compared with pilot for the <strong>same location and measurement method</strong>.</p>
+        <h2 id="baseline-title">Water consumption</h2>
+        <p class="muted">Charts are drawn only from recorded readings. Values in m³ are converted to litres (1 m³ = 1,000 L), and baseline is compared with pilot only for the <strong>same location and measurement method</strong>.</p>
       </div>
-      <div id="baseline-notice"></div>
-      <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
-        <div class="seg" role="radiogroup" aria-label="Display unit">
-          <label><input type="radio" name="unit" value="L" checked>Litres (L)</label>
-          <label><input type="radio" name="unit" value="m3">Cubic metres (m³)</label>
+      <div id="readings-empty"></div>
+      <div id="readings-content" hidden>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+          <div class="seg" role="radiogroup" aria-label="Display unit">
+            <label><input type="radio" name="unit" value="L" checked>Litres (L)</label>
+            <label><input type="radio" name="unit" value="m3">Cubic metres (m³)</label>
+          </div>
         </div>
+        <div class="grid grid--2">
+          <div class="chart-card"><h3>Daily water consumption</h3><div class="chart-box" id="chart-daily" data-label="Line chart of total daily water consumption"></div></div>
+          <div class="chart-card"><h3>Water readings by location</h3><div class="chart-box" id="chart-location" data-label="Bar chart of average daily consumption per location"></div></div>
+          <div class="chart-card" id="chart-issues-card"><h3>Reported water issues</h3><div class="chart-box" id="chart-issues" data-label="Bar chart of reported issues by category"></div></div>
+          <div class="chart-card" id="chart-bvp-card"><h3>Baseline versus pilot results</h3><div class="chart-box" id="chart-bvp" data-label="Grouped bar chart comparing baseline and pilot averages"></div></div>
+        </div>
+        <h3 style="margin-top:40px">Measurement log</h3>
+        <div class="table-wrap table-wrap--scroll" id="readings-table" tabindex="0" aria-label="Measurement log (scrollable)"></div>
       </div>
-      <div class="grid grid--2">
-        <div class="chart-card"><h3>Daily water consumption</h3><div class="chart-box" id="chart-daily" data-label="Line chart of total daily water consumption"></div></div>
-        <div class="chart-card"><h3>Water readings by location</h3><div class="chart-box" id="chart-location" data-label="Bar chart of average daily consumption per location"></div></div>
-        <div class="chart-card"><h3>Reported water issues</h3><div class="chart-box" id="chart-issues" data-label="Bar chart of reported issues by category"></div></div>
-        <div class="chart-card"><h3>Baseline versus pilot results</h3><div class="chart-box" id="chart-bvp" data-label="Grouped bar chart comparing baseline and pilot averages"></div></div>
-      </div>
-      <h3 style="margin-top:40px">Measurement log</h3>
-      <div class="table-wrap table-wrap--scroll" id="readings-table" tabindex="0" aria-label="Measurement log (scrollable)"></div>
     </div>
   </section>
 
-  <section class="section section--white" aria-labelledby="map-title">
+  <section class="section section--mist" aria-labelledby="map-title">
     <div class="container">
       <div class="section-head">
         <h2 id="map-title">Campus water hotspot map</h2>
-        <p class="muted">Markers appear only for locations an administrator has added with coordinates. Report descriptions and reporter details are never shown publicly.</p>
+        <p class="muted">Locations the project team has verified on site, with the water problems reported there. Reporter details are never shown publicly.</p>
       </div>
-      <div id="map-notice"></div>
-      <p class="small muted">Sample markers are placed around a placeholder map centre and are labelled DEMO. They are not real campus water hotspots.</p>
       <div class="map" id="hotspot-map" role="region" aria-label="Interactive map of reported water problems"></div>
       <div id="map-legend"></div>
     </div>
   </section>
 
-  <section class="section section--mist" aria-labelledby="gallery-title">
+  <section class="section section--white" aria-labelledby="gallery-title">
     <div class="container">
       <div class="section-head">
         <h2 id="gallery-title">Research photo gallery</h2>
@@ -137,7 +128,7 @@
     </div>
   </section>
 
-  <section class="section section--forest" aria-labelledby="video1-title">
+  <section class="section section--forest" aria-labelledby="video1-title" data-video-section hidden>
     <div class="container split">
       <div>
         <h2 id="video1-title">Seeing the problem on campus</h2>
@@ -187,7 +178,7 @@
     </div>
     <div class="footer-base">
       <span>&copy; <span data-year></span> Green Campus Innovation. WaterWatch is a proposed campus prototype, not an official university system.</span>
-      <span>Submissions are saved only in the browser of the device used. Personal data is handled in line with Ghana's Data Protection Act, 2012 (Act 843).</span>
+      <span>Personal data is handled in line with Ghana's Data Protection Act, 2012 (Act 843).</span>
     </div>
   </div>
 </footer>

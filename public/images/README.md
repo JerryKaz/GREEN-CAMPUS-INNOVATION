@@ -12,9 +12,9 @@ Save the group's **original** photos here, in the folder that matches the catego
 | `pilot/` | The pilot: signage, repairs, launch |
 | `before-after/` | Matching before and after photos of the same spot |
 
-Rules: JPG, PNG or WebP, about 1600 px wide, ideally under 500 KB. Lower-case file names with dashes, no spaces (`hostel-a-tap.jpg`). Never upload stock or AI-generated images as research evidence.
+Rules: JPG, PNG or WebP, about 1600 px wide, ideally under 500 KB. Lower-case file names with dashes, no spaces (`hostel-a-tap.jpg`). Never use stock or AI-generated images.
 
-A photo appears in the gallery only when it also has an entry in `public/data/media-gallery.json`. The easiest way is Admin → Media Management → Add image entry → Export media-gallery.json.
+A photo appears in the gallery only when it also has an entry in `public/data/media-gallery.json`. The admin panel prepares both: Admin → Photos and Videos → Upload Photo, then Data Backup → Publish to the website, which downloads the photo files (already named) and the updated `media-gallery.json`.
 
 ## Page photo slots
 
@@ -32,4 +32,4 @@ These fixed slots fill automatically when a file with exactly this path exists. 
 | `campus/implementation-hero.jpg`, `pilot/corrective-action.jpg` | Implementation page |
 | `campus/feedback-hero.jpg`, `campus/feedback-community.jpg` | Feedback page |
 
-Until a file exists, decorative `campus/` slots show a free Unsplash stand-in photo (not of VVU). Evidence slots (research, interviews, hotspots, prototype, pilot) show a labelled placeholder instead, never a stock photo.
+Until a file exists, each slot shows a designed green background. No stock photos are used.

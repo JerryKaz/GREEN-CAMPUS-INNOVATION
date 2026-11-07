@@ -7,13 +7,21 @@ import { esc } from '../lib/dom.js';
 let videosPromise;
 const videos = (db) => (videosPromise ??= galleryVideos(db).catch(() => []));
 
-/** Fill an element with the video configured for `slot` ('documentary' | 'solution-demo'). */
+/**
+ * Fill an element with the video configured for `slot` ('documentary' | 'solution-demo').
+ * The enclosing [data-video-section] stays hidden until a valid link has been added,
+ * so visitors never see an empty video frame.
+ */
 export async function renderVideoSlot(el, db, slot) {
-  const v = (await videos(db)).find((x) => x.slot === slot) ?? {};
+  const v = (await videos(db)).find((x) => x.slot === slot && toEmbedUrl(x.url));
+  const section = el.closest('[data-video-section]');
+  if (!v) { if (section) section.hidden = true; return false; }
+  if (section) section.hidden = false;
   mountVideo(el, `video-${slot}`, toEmbedUrl(v.url), v);
   if (v.title && el.nextElementSibling?.matches?.('[data-video-caption]')) {
     el.nextElementSibling.innerHTML = `<strong>${esc(v.title)}</strong>${v.duration ? ` · ${esc(v.duration)}` : ''}`;
   }
+  return true;
 }
 
 /** Interview videos (any number). Renders nothing when there are none. */

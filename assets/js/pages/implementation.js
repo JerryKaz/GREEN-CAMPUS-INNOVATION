@@ -1,7 +1,6 @@
 import { initLayout } from '../layout.js';
-import { SAMPLE_CHIP } from '../components/stats.js';
-import { includeDemo } from '../data/db.js';
-import { esc, fmtGHS, fmtNum, emptyHTML, errorHTML, demoBadge } from '../lib/dom.js';
+import { quietEmpty } from '../lib/research-view.js';
+import { esc, fmtGHS, fmtNum } from '../lib/dom.js';
 import { icon } from '../lib/icons.js';
 import { budgetTotals, calcSavings, reportBaselineVsPilot } from '../lib/calc.js';
 import { readForm } from '../lib/validate.js';
@@ -11,7 +10,6 @@ import { renderBeforeAfter } from '../components/gallery.js';
 import { renderVideoSlot } from '../components/video.js';
 
 const { db } = await initLayout();
-const demo = includeDemo();
 
 // ---- settings: roadmap phase + tariff --------------------------------------
 const settings = await siteContent(db).catch(() => ({}));
@@ -35,7 +33,7 @@ function drawBudget() {
     <thead><tr><th>Item</th><th>Basis</th><th class="num">Quantity</th><th class="num">Unit cost (GH₵)</th><th class="num">Line total</th></tr></thead>
     ${cats.map((c) => `<tbody><tr><th colspan="5" style="background:#F0FAF3;color:var(--forest)">${esc(BUDGET_CATEGORIES[c])}</th></tr>
       ${lines.map((l, i) => (l.category !== c ? '' : `<tr>
-        <td>${esc(l.item)} ${demoBadge(l.is_demo)}${l.notes ? `<div class="small muted">${esc(l.notes)}</div>` : ''}</td>
+        <td>${esc(l.item)}${l.notes ? `<div class="small muted">${esc(l.notes)}</div>` : ''}</td>
         <td><span class="badge badge--${l.cost_basis === 'estimate' ? 'estimate' : 'verified'}">${esc(label(COST_BASIS, l.cost_basis))}</span></td>
         <td class="num"><input type="number" min="0" step="any" value="${esc(l.quantity)}" data-i="${i}" data-k="quantity" aria-label="Quantity for ${esc(l.item)}" style="width:90px;text-align:right"></td>
         <td class="num"><input type="number" min="0" step="any" value="${esc(l.unit_cost)}" data-i="${i}" data-k="unit_cost" aria-label="Unit cost for ${esc(l.item)}" style="width:120px;text-align:right"></td>
@@ -48,15 +46,12 @@ function drawBudget() {
 
 let official = [];
 try {
-  official = await db.list('budget_items', { includeDemo: demo, order: ['category', 'asc'] });
-  if (official.some((b) => b.is_demo)) {
-    document.getElementById('budget-notice').innerHTML = SAMPLE_CHIP;
-  }
+  official = await db.publicList('budget_items', { order: ['category', 'asc'] });
   scenario = structuredClone(official);
-  if (!scenario.length) budgetHost.innerHTML = emptyHTML('No budget items yet', 'Administrators add budget lines with their cost basis (estimate, quotation or actual).', 'coins');
+  if (!scenario.length) budgetHost.innerHTML = quietEmpty('The project budget will be published here once costs have been confirmed.', 'coins');
   else drawBudget();
 } catch (e) {
-  budgetHost.innerHTML = errorHTML('The budget could not be loaded.');
+  budgetHost.innerHTML = quietEmpty('The project budget will be published here once costs have been confirmed.', 'coins');
 }
 budgetHost.addEventListener('change', (e) => {
   const inp = e.target.closest('input[data-i]');
@@ -75,7 +70,7 @@ budgetHost.addEventListener('click', (e) => {
 const form = document.getElementById('savings-form');
 const out = document.getElementById('savings-result');
 const tariff = settings.tariff ?? {};
-if (tariff.value) {
+if (tariff.value && tariff.verified) {
   form.elements.tariff.value = tariff.value;
   form.elements.tariffUnit.value = tariff.unit ?? 'm3';
   form.elements.tariffVerified.checked = !!tariff.verified;
@@ -108,7 +103,7 @@ recalc();
 // Offer to fill from recorded like-for-like readings (daily averages).
 try {
   const [readings, locations] = await Promise.all([
-    db.list('water_readings', { includeDemo: demo }), db.list('campus_locations', { includeDemo: demo }),
+    db.publicList('water_readings'), db.publicList('campus_locations'),
   ]);
   const comparable = reportBaselineVsPilot(readings, locations).filter((r) => r.meets_minimum_days);
   if (comparable.length) {
@@ -120,8 +115,7 @@ try {
       form.elements.unit.value = 'L';
       form.elements.periodDays.value = 1;
       recalc();
-      const usesDemo = comparable.some((r) => r.includes_demo);
-      out.insertAdjacentHTML('afterbegin', `<p class="small muted">Filled with average <strong>daily</strong> litres across ${comparable.length} comparable location/method group(s).${usesDemo ? ' ' + demoBadge(true) : ''}</p>`);
+      out.insertAdjacentHTML('afterbegin', `<p class="small muted">Filled with average <strong>daily</strong> litres across ${comparable.length} comparable location/method group(s).</p>`);
     });
   }
 } catch { /* calculator still works manually */ }
@@ -131,24 +125,23 @@ try {
   const host = document.getElementById('results-table');
   try {
     const [readings, locations] = await Promise.all([
-      db.list('water_readings', { includeDemo: demo }), db.list('campus_locations', { includeDemo: demo }),
+      db.publicList('water_readings'), db.publicList('campus_locations'),
     ]);
     const rows = reportBaselineVsPilot(readings, locations);
-    if (rows.some((r) => r.includes_demo)) document.getElementById('results-notice').innerHTML = SAMPLE_CHIP;
-    host.innerHTML = !rows.length ? emptyHTML('Awaiting baseline and pilot readings', 'Measurements appear here as soon as they are recorded.', 'gauge')
+    host.innerHTML = !rows.length ? quietEmpty('No water readings have been recorded yet. Baseline and pilot measurements will be compared here once they are available.', 'gauge')
       : `<table class="data"><caption class="sr-only">Baseline versus pilot measurements</caption><thead><tr><th>Location</th><th>Method</th>
         <th class="num">Baseline L/day</th><th class="num">Days</th><th class="num">Pilot L/day</th><th class="num">Days</th>
         <th class="num">Saved L/day</th><th class="num">Reduction</th><th>Evidence</th></tr></thead><tbody>
-        ${rows.map((r) => `<tr><td>${esc(r.location_name)} ${demoBadge(r.includes_demo)}</td><td>${esc(r.measurement_method)}</td>
+        ${rows.map((r) => `<tr><td>${esc(r.location_name)}</td><td>${esc(r.measurement_method)}</td>
           <td class="num">${fmtNum(r.baseline_avg_daily_l, 1)}</td><td class="num">${r.baseline_days}</td>
           <td class="num">${r.pilot_avg_daily_l === null ? 'Not yet' : fmtNum(r.pilot_avg_daily_l, 1)}</td><td class="num">${r.pilot_days}</td>
           <td class="num">${r.saved_per_day_l === null ? 'N/A' : fmtNum(r.saved_per_day_l, 1)}</td>
           <td class="num">${r.reduction_pct === null ? 'N/A' : `${fmtNum(r.reduction_pct, 1)}%`}</td>
           <td>${r.meets_minimum_days ? '<span class="badge badge--verified">≥3 days each phase</span>' : '<span class="badge badge--estimate">Not enough days yet</span>'}</td></tr>`).join('')}
         </tbody></table>`;
-  } catch (e) { host.innerHTML = errorHTML('Measurements could not be loaded.'); }
+  } catch (e) { host.innerHTML = quietEmpty('Measurements could not be loaded right now. Please refresh the page.', 'gauge'); }
 })();
 
-galleryImages(db).then((imgs) => renderBeforeAfter(document.getElementById('before-after'), imgs))
-  .catch(() => renderBeforeAfter(document.getElementById('before-after'), []));
+galleryImages(db).then((imgs) => { document.getElementById('ba-block').hidden = !renderBeforeAfter(document.getElementById('before-after'), imgs); })
+  .catch(() => {});
 renderVideoSlot(document.getElementById('impl-video'), db, 'solution-demo');

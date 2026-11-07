@@ -41,7 +41,7 @@ export async function render({ db, el, can }) {
   el.querySelector('[data-export]').addEventListener('click', () => downloadCSV('pledges.csv', visible, [
     { label: 'Submitted', key: 'submitted_at' }, { label: 'Commitment', value: (p) => label(COMMITMENTS, p.commitment_type) },
     { label: 'Name', key: 'full_name' }, { label: 'Email', key: 'email' }, { label: 'Department', key: 'department' },
-    { label: 'Comments', key: 'comments' }, { label: 'Demo record', value: (p) => (p.is_demo ? 'yes' : 'no') },
+    { label: 'Comments', key: 'comments' }, { label: 'Old record (not fieldwork)', value: (p) => (p.is_demo ? 'yes' : 'no') },
   ]));
   onActions(host, {
     del: async (i) => {

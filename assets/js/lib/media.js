@@ -52,7 +52,7 @@ export const mediaURL = (file) => new URL(MEDIA_DIR + file, root).href;
 // Stand-in photos from Unsplash (free to use under the Unsplash License) shown
 // in DECORATIVE slots only, until the project's own file exists. Set USE_STOCK
 // to false to show the designed placeholders everywhere.
-export const USE_STOCK = true;
+export const USE_STOCK = false; // no stand-in photos: only the group's own pictures are shown
 export const stockURL = (id, w = 1600) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=75`;
 
 const showSlots = (() => {
@@ -67,16 +67,15 @@ const showSlots = (() => {
 const ICONS = {
   photo: '<path d="M4 7h3l2-3h6l2 3h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="4"/>',
   play: '<path d="M8 5.5v13l11-6.5z"/>',
+  drop: '<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>',
 };
 
 function placeholder(slot, key) {
-  const kind = slot.video ? 'play' : 'photo';
+  const kind = slot.video ? 'play' : 'drop';
   return `<div class="media__ph" aria-hidden="true">
       <svg class="media__rings" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke="currentColor">
         <circle cx="300" cy="120" r="40"/><circle cx="300" cy="120" r="90"/><circle cx="300" cy="120" r="150"/><circle cx="300" cy="120" r="220"/></g></svg>
       <span class="media__glyph ${slot.video ? 'media__glyph--play' : ''}"><svg viewBox="0 0 24 24" width="26" height="26" fill="${slot.video ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">${ICONS[kind]}</svg></span>
-      <span class="media__caption">${slot.caption}</span>
-      ${!slot.decorative && !slot.video ? '<span class="media__pending">Project photo coming soon</span>' : ''}
     </div>
     ${showSlots && slot.file ? `<span class="media__tag">${MEDIA_DIR}${slot.file}<br>${slot.size}</span>` : ''}`;
 }

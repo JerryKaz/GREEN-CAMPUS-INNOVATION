@@ -1,6 +1,6 @@
 // Conservation actions (Feature 4): corrective work, cost in GHS, verification.
 import { esc, icon, fmtDate, statusBadge, demoBadge, panel, tableHTML, actionBtn, onActions, selectHTML,
-  formModal, today, readOnlyNote } from '../ui.js';
+  formModal, today, readOnlyNote, intro, primaryBtn } from '../ui.js';
 import { emptyHTML, downloadCSV, toast, confirmDialog, fmtGHS } from '../../lib/dom.js';
 import { ACTION_STATUSES, ISSUE_TYPES, options, label } from '../../lib/labels.js';
 import { friendlyError } from '../../lib/validate.js';
@@ -14,7 +14,7 @@ export function actionFields({ locations, reports, lockReport = false }) {
       hint: lockReport ? 'Linked to the report you opened.' : 'Link the report this action responds to, if any.' },
     { name: 'location_id', label: 'Location', type: 'select', required: true,
       options: locations.map((l) => ({ value: l.id, text: l.name })) },
-    { name: 'action_description', label: 'Corrective action', type: 'textarea', required: true, minLength: 5, maxLength: 1000, rows: 3 },
+    { name: 'action_description', label: 'What was done (or is planned)?', hint: 'e.g. Replaced worn washers on four taps', type: 'textarea', required: true, minLength: 5, maxLength: 1000, rows: 3 },
     { name: 'responsible_team', label: 'Responsible office or team', required: true, minLength: 2, maxLength: 160, list: TEAMS, half: true },
     { name: 'implementation_date', label: 'Implementation date', type: 'date', nullable: true, optional: true, half: true },
     { name: 'estimated_cost', label: 'Estimated cost (GH₵)', type: 'number', min: 0, step: '0.01', required: true, half: true,
@@ -23,7 +23,7 @@ export function actionFields({ locations, reports, lockReport = false }) {
     { name: 'status', label: 'Implementation status', type: 'select', required: true, options: options(ACTION_STATUSES), half: true },
     { name: 'completion_date', label: 'Completion date', type: 'date', nullable: true, optional: true, half: true,
       validate: (v, all) => (v && all.implementation_date && v < all.implementation_date ? 'Completion cannot be before implementation.' : null) },
-    { name: 'outcome', label: 'Outcome', type: 'textarea', maxLength: 1000, rows: 2, optional: true,
+    { name: 'outcome', label: 'Outcome (what changed afterwards)', type: 'textarea', maxLength: 1000, rows: 2, optional: true,
       hint: 'What changed afterwards, e.g. leak stopped at follow-up check. Record measured savings as water readings.' },
     { name: 'verification_notes', label: 'Verification notes', type: 'textarea', maxLength: 2000, rows: 3, optional: true,
       hint: 'Who checked the work, when, and what they observed.',
@@ -42,11 +42,11 @@ export async function render({ db, el, can }) {
   let status = '';
   let visible = [];
 
-  el.innerHTML = `${can.write ? '' : readOnlyNote()}${panel('Conservation actions', '<div data-table></div>', {
+  el.innerHTML = `${intro('Record each repair or water-saving step, for example fixing a leaking tap or adding a float valve. Note who did it, when, and what changed afterwards.', primaryBtn('Add Conservation Action'))}${panel('Conservation actions', '<div data-table></div>', {
     iconName: 'wrench',
     tools: `${selectHTML('status', options(ACTION_STATUSES), '', 'All statuses', 'Filter by status')}
       <button type="button" class="btn btn--ghost btn--sm" data-export>${icon('download', 16)}CSV</button>
-      ${can.write ? `<button type="button" class="btn btn--sm" data-add>${icon('plus', 16)}Record action</button>` : ''}`,
+`,
   })}`;
   const host = el.querySelector('[data-table]');
 
@@ -74,7 +74,7 @@ export async function render({ db, el, can }) {
   };
 
   const open = (a) => formModal({
-    title: a ? 'Edit conservation action' : 'Record conservation action',
+    title: a ? 'Edit Conservation Action' : 'Add Conservation Action',
     fields: actionFields({ locations, reports }),
     values: a ?? { status: 'planned', estimated_cost: 0, implementation_date: today(), responsible_team: 'Estates/Facilities' },
     onSubmit: async (v) => {
@@ -96,7 +96,7 @@ export async function render({ db, el, can }) {
     { label: 'Implementation date', key: 'implementation_date' }, { label: 'Estimated cost (GHS)', key: 'estimated_cost' },
     { label: 'Actual cost (GHS)', key: 'actual_cost' }, { label: 'Status', value: (a) => label(ACTION_STATUSES, a.status) },
     { label: 'Completion date', key: 'completion_date' }, { label: 'Outcome', key: 'outcome' },
-    { label: 'Verification notes', key: 'verification_notes' }, { label: 'Demo record', value: (a) => (a.is_demo ? 'yes' : 'no') },
+    { label: 'Verification notes', key: 'verification_notes' }, { label: 'Old record (not fieldwork)', value: (a) => (a.is_demo ? 'yes' : 'no') },
   ]));
   onActions(host, {
     edit: (i) => open(visible[i]),

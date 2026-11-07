@@ -12,7 +12,7 @@ WaterWatch is a student project prototype, not an official university system.
 
 | Page | Purpose |
 |---|---|
-| Home (`index.html`) | Project identity, the water challenge, objectives, how WaterWatch works, Video 1, photo highlights. Statistics appear **only from real records** |
+| Home (`index.html`) | Project identity, the water challenge, objectives, how WaterWatch works. Statistics, Video 1 and photo highlights appear once real information exists |
 | Research (`research.html`) | Methodology, findings A–E, baseline observations (≥3 days), interviews (Estates/Facilities + ≥5 students), consumption charts, measurement log, hotspot map, photo gallery, Video 1 |
 | Solution (`solution.html`) | VVU WaterWatch features, the report form (leakage, broken pipe, overflowing tank, faulty tap, faulty flush), hotspot map, TRIZ/SCAMPER, Video 2, pilot results, recommendations |
 | Implementation (`implementation.html`) | How the intervention works, timeline, baseline vs pilot measurements, before/after photo comparisons, budget and water-savings calculators, Video 2 |
@@ -20,7 +20,7 @@ WaterWatch is a student project prototype, not an official university system.
 | Dashboard (`dashboard.html`) | All figures derived from stored records, with search, date, category, status and location filters, charts, map, recent activity |
 | Admin (`/admin/`) | Password-protected panel (see below). Not linked from the public navigation |
 
-Demonstration records are labelled **DEMO** / **DEMO DATA** everywhere they appear.
+**The site contains no demonstration data.** It starts with empty data stores; every research finding, reading, location, photo and video is entered by the administrator. Sections without information show short, calm messages (for example "No water readings have been recorded yet."), statistics stay hidden until real records exist, and video sections stay hidden until a link is added.
 
 ## How it works (no backend)
 
@@ -37,7 +37,7 @@ IndexedDB lives **in one browser on one device**. That means:
 * Data does not sync between devices, browsers or visitors, and nothing is sent to a server.
 * Clearing browser data, private windows or a different browser all start empty.
 
-So: **run the demonstration from one device**, export a backup regularly (Admin → Data Management), and keep backups with the project files. Collecting submissions from many people for real needs a backend (see "Moving to production").
+So: **run the presentation from one device**, download a backup regularly (Admin → Data Backup), and keep backups with the project files. Collecting submissions from many people for real needs a backend (see "Moving to production").
 
 ## Quick start
 
@@ -49,90 +49,72 @@ npm test           # data layer and calculation tests
 
 Serve the folder over HTTP; opening files with `file://` will not work (ES modules, IndexedDB, service worker).
 
-On first visit the site loads **77 demonstration records** from `public/data/sample-data.json` (only when the database is empty, and only once per device). Clearing them does not bring them back on the next visit; use Admin → Data Management → Load demonstration data if you want them again.
+The database starts **empty**. Nothing is inserted automatically, on the first visit or later.
+
+**Upgrading from the earlier version:** if a browser still holds demonstration records from the previous version, they are kept but hidden from every public page. The admin is told in the notification centre and on the Data Backup page, and can remove them there. A backup is downloaded first and real records are never touched.
 
 ## Admin panel
 
-Open **`/admin/`** (e.g. `https://your-domain/admin/`). It is deliberately not linked from the public pages.
+Open **`/admin/`** (e.g. `https://jerrykaz.github.io/GREEN-CAMPUS-INNOVATION/admin/`). It is not linked from the public pages.
 
-* **Default password: `VVU2026`**
-* **Change it in one place:** `assets/js/admin-config.js` → `ADMIN_PASSWORD`. Commit and redeploy.
-* Show/hide password toggle, log out button, automatic sign-out after 30 minutes idle (configurable), lock-out for 30 seconds after 5 wrong attempts.
+* **Password: `VVU2026`**. Change it in `assets/js/admin-config.js` → `ADMIN_PASSWORD`, then commit and push.
+* Show/hide password, Logout (menu and top bar), automatic logout after 30 minutes idle, a 30-second lock after 5 wrong attempts.
 
-| Section | What you can do |
+The admin panel is written for someone with basic computer skills: plain language ("Add Water Reading", "Save Changes", "Upload Photo"), a short explanation and a main button at the top of every section, field hints, confirmations and clear messages.
+
+**First login:** a welcome screen offers a **10-step guided tour** (Dashboard, Research Information, Water Readings, Campus Hotspots, Conservation Actions, Photos and Videos, Pledges and Feedback, Publishing, Backup, Notifications) with Next, Previous, Skip, Close and a progress bar. It is shown once per browser; reopen it any time from **Help / Take a Tour** in the menu or **Help and User Guide**.
+
+**Notification centre:** the bell in the top bar shows unread messages and opens a side panel; **Notifications** in the menu shows the full list with filters. It holds getting-started guidance, research reminders, data and publishing reminders, automatic checks (for example "Baseline readings cover 2 day(s). At least 3 are needed.", old records found, photos not yet published, no recent backup) and system messages (saves, backups, restores). Clicking a message opens the relevant page. Messages can be marked read/unread, all marked read, and system messages dismissed; guidance always stays available. Returning admins see only the bell count, not pop-ups.
+
+| Menu | What it is for |
 |---|---|
-| Dashboard | Summary figures, charts, latest reports |
-| Water Reports | View, add, edit, delete; change status and assignment; filter by category, status, severity, location and date; CSV |
-| Water Readings | Add/edit baseline and pilot readings; history with filters; live water-saving calculations (saved, % reduction, GH₵ with a verified tariff, annual only with ≥7 days) |
-| Conservation Actions | Create and manage interventions: status, implementation and completion dates, description, outcome, costs |
-| Campus Locations | Add, edit and remove hotspots; click the map to set coordinates; mark as verified |
-| Pledges / Feedback | Search, filter by type and date, review, delete, CSV |
-| Media Management | Gallery image entries (path, title, caption, date, location, category, alt text, before/after pairs) and video links |
-| Reports & Analytics | Four saved reports with charts, CSV and print |
-| Budget | Budget lines with cost basis (estimate, quotation, actual) |
-| Site Content | Research findings, observations, interviews, pilot results, water tariff, roadmap phase, contact details |
-| Data Management | Export/import JSON backups, CSV exports, load/restore/clear demo data, last backup date, storage status |
+| Dashboard | Progress overview (which parts have information and which are awaiting fieldwork), quick actions, recently added information |
+| Research Information | Title, background, problem statement, objectives, methodology (with collection method), observations (dates, places), interview summaries, findings, recommendations. **Save Draft**, **Save and Publish**, **Preview** per section |
+| Water Readings | Add Water Reading (baseline or pilot), history, filters, automatic water-saved calculations |
+| Campus Hotspots | Add a Campus Location with a map position; only locations marked **Verified** appear on the public map |
+| Conservation Actions | Interventions with dates, team, status, costs and outcome |
+| Water Problem Reports | Problems reported through the public form; status, assignment, edit, add, delete, CSV |
+| Photos and Videos | Upload Photo (resized in the browser, location data removed) and Add Video Link (YouTube / Google Drive) |
+| Pledges and Feedback | Submissions with search, date filters, review status and CSV |
+| Website Content | Pilot results (draft/publish), water price, current project phase, contact details, budget |
+| Notifications | The notification centre |
+| Data Backup | Download Backup, Restore from a Backup, Publish to the website, CSV lists, storage status, removal of old records |
+| Help and User Guide | Tour, a typical working session, what each section is for, common questions |
 
-Changes made in the admin panel update IndexedDB immediately and show on the public pages and dashboard of the **same browser** (open tabs refresh automatically).
-
-### Security: what the password does and does not do
-
-The password is a **demonstration-level access gate**. Because GitHub Pages has no server, the check runs in the browser, and `admin-config.js` is downloadable by anyone who looks at the page source. It keeps casual visitors out of the admin screens during a presentation. It does **not** protect data, and there is nothing secret to protect: the data is on the user's own device anyway.
-
-* Do not store passwords, ID numbers or other sensitive personal information in WaterWatch.
-* Names and emails on forms are optional; collect only what the project needs (Data Protection Act, 2012, Act 843).
-* Proper authentication needs a backend or an external identity provider (for example Supabase Auth, Firebase Auth, Auth0 or Microsoft Entra ID with server-side rules). Until then, treat the admin panel as a convenience for the project team, not as security.
+Changes appear immediately on the public pages and dashboard **in the same browser** (open tabs refresh automatically).
 
 ## Publishing content for every visitor
 
-Because data is local, anything the group wants **all visitors** to see must be in the repository. Three files in `public/data/` hold published content:
+Information saved in the admin panel lives in the admin's browser, so it shows on **that computer** at once. For visitors on other devices it must be in the website files. In **Data Backup → Publish to the website** the admin downloads:
 
-| File | Contents | How to update |
+| File | Contents | Goes in |
 |---|---|---|
-| `site-content.json` | Findings, observations, interviews, pilot results, tariff, roadmap phase, contact details | Admin → Site Content → save → Data Management → **Export site-content.json** → replace the file → commit and push |
-| `media-gallery.json` | Gallery photo entries | Admin → Media Management → add entries → **Export media-gallery.json** → replace the file → commit and push |
-| `video-gallery.json` | Video 1, Video 2 and interview video links | Admin → Media Management → video links → **Export video-gallery.json** → replace → commit and push |
-| `sample-data.json` | The demonstration records | Generated by `npm run sample-data` from `assets/js/data/demo-seed.js` |
+| `site-content.json` | Research information, pilot results, water price, phase, contact details (with each section's draft/published state) | `public/data/` |
+| `media-gallery.json` + photo files | Photo list and every photo uploaded on that computer, already named with its final path | `public/data/` and the folder in each photo's path (e.g. `public/images/water-hotspots/`) |
+| `video-gallery.json` | Video links | `public/data/` |
 
-Leave fields empty until they are verified. Empty fields show an "awaiting data" message, never an invented value.
+The admin sends these files to whoever manages the GitHub repository, who replaces them and pushes. All four files ship **empty**.
 
 ## Photos and videos
 
 ```
 public/
   images/  campus/ water-hotspots/ research/ interviews/ prototype/ pilot/ before-after/
-  videos/  documentary/ solution-demo/ interviews/
-  data/    sample-data.json  media-gallery.json  video-gallery.json  site-content.json
+  videos/  documentary/ solution-demo/ interviews/   (placeholders only: videos are never committed)
+  data/    site-content.json  media-gallery.json  video-gallery.json
 ```
 
-**Photos**
-
-1. Save the original photo in the right folder, e.g. `public/images/water-hotspots/hostel-a-tap.jpg` (JPG/PNG/WebP, ~1600 px wide, ideally under 500 KB, lower-case name with dashes).
-2. Add its entry (Admin → Media Management → Add image entry). The admin shows whether the file is found.
-3. Export `media-gallery.json`, replace the file, commit and push.
-
-For before-and-after comparisons, give both photos the same **pair ID** and set one to *before* and one to *after*; they appear as a slider on the Implementation page.
-
-Page photo slots (hero images etc.) and their exact paths are listed in [`public/images/README.md`](public/images/README.md). Add `?media=1` to any page address to see slot paths on the page. Decorative campus slots show a free Unsplash stand-in until your photo exists; **evidence slots (research, interviews, hotspots, prototype, pilot) never show stock photos**, only a labelled placeholder.
-
-**Videos**: do not commit video files (they are git-ignored). Upload to YouTube (unlisted is fine) or Google Drive (share as "Anyone with the link") and paste the link in Admin → Media Management, or directly into `video-gallery.json`.
-
-* Video 1, Problem documentary, 3–5 min → slot `documentary`
-* Video 2, Solution demonstration, 2–3 min → slot `solution-demo`
-* Optional interview videos → slot `interviews`
+* **Photos:** Admin → Photos and Videos → **Upload Photo**. Give a title, caption, category, date, place and a description for screen readers. Give a "before" and an "after" photo the same pair name to create a comparison slider on the Implementation page. Only the group's own photos are used; no stock images are shown anywhere.
+* **Videos:** **Add Video Link** with a YouTube link (Unlisted is fine) or a Google Drive link shared as "Anyone with the link". Video 1 (problem documentary, 3–5 min) and Video 2 (solution demonstration, 2–3 min) each have one slot; interview videos can be added freely. Video sections stay hidden on the website until a link exists.
+* Fixed page photo slots (hero images etc.) are listed in [`public/images/README.md`](public/images/README.md). Until a file exists they show a designed green background, never a photo.
 
 ## Backup and restore
 
-Admin → **Data Management**:
+Admin → **Data Backup**:
 
-* **Export all data (JSON)**: every record, site content saved on the device, export timestamp, schema version and a unique export ID. The last backup date is shown in the admin header.
-* **Import a backup**: the file is validated first (app, schema version, required fields, allowed values, relationships, duplicate IDs). Nothing changes until you choose:
-  * **Merge**: adds only records that are not already present (re-importing the same file adds nothing; you are warned if that exact backup was imported before).
-  * **Replace all data**: downloads a safety backup of the current data first, then swaps everything.
-* **CSV** per collection, with readable labels.
-* **Load / Restore / Clear demonstration data**: clear asks for confirmation; real records are never touched.
-
-Do a backup before every presentation and after every data-entry session.
+* **Download Backup**: every record, photo and setting, with export date, schema version and an export ID. The last backup date is shown, and the notification centre reminds the admin when a backup is missing or over a week old.
+* **Restore from a Backup**: the file is checked first (right app, schema version, required fields, allowed values, links between records, duplicate IDs). Nothing changes until the admin chooses **Add the new records, keep mine** (records already present are skipped, so restoring twice cannot create duplicates) or **Replace everything with the backup** (a safety backup is downloaded first).
+* **Download lists for Excel (CSV)** for each kind of record.
 
 ## Deployment (GitHub Pages + custom domain)
 
@@ -157,17 +139,17 @@ All links and asset paths are relative, so the site works from the domain root a
 ├── assets/
 │   ├── css/                  main.css, admin.css
 │   └── js/
-│       ├── config.js         Site settings (map centre, demo data switches)
+│       ├── config.js         Site settings (map centre, project identity)
 │       ├── admin-config.js   ADMIN PASSWORD and session timeouts
 │       ├── layout.js         Header, navigation, reveals
-│       ├── data/             idb.js (IndexedDB), store.js (service layer), schema.js (validation), demo-seed.js
+│       ├── data/             idb.js (IndexedDB), store.js (service layer), schema.js (validation)
 │       ├── pages/            One script per public page
 │       ├── components/       Charts, map, gallery, video, report form, stats
-│       ├── admin/            auth.js, app.js, ui.js, views/
+│       ├── admin/            auth.js, app.js, notify.js (notifications), tour.js (onboarding), ui.js, views/
 │       └── lib/              Calculations, content loading, backups, validation, helpers
 ├── public/                   images/, videos/, data/ (see above)
 ├── docs/                     DEPLOYMENT.md, partials/ (shared header and footer)
-├── scripts/                  build-site, generate-sample-data, build-partials
+├── scripts/                  build-site, build-partials
 ├── tests/                    node:test suites
 ├── vendor/                   Chart.js, Leaflet
 ├── sw.js                     Offline support
@@ -182,12 +164,11 @@ All links and asset paths are relative, so the site works from the domain root a
 | `npm test` | Runs the data-layer and calculation tests |
 | `npm run build` | Builds the deployable `_site/` folder (used by GitHub Actions) |
 | `npm run preview` | Builds and serves `_site/` on port 5174, exactly as deployed |
-| `npm run sample-data` | Regenerates `public/data/sample-data.json` |
 | `npm run partials` | Copies `docs/partials/header.html` and `footer.html` into every page |
 
 ## Content rules
 
-This is an academic project. Never publish invented measurements, tariffs, interviews, survey results, locations, coordinates, pilot outcomes or savings. Demonstration records are flagged `is_demo` and labelled everywhere; clear them before presenting real research, and set `SEED_DEMO_DATA` and `SHOW_DEMO_DATA` to `false` in `assets/js/config.js` once real data is in use. The map centre in `config.js` is a placeholder until replaced with verified campus coordinates. The official VVU logo and crest are not used.
+This is an academic project. The site contains no invented measurements, tariffs, interviews, findings, locations, coordinates, pilot outcomes, savings or photos, and must never be given any. Research sections stay as drafts until the group has verified them. Money saved is calculated only with a water price that the admin has confirmed from an official source. The map centre in `assets/js/config.js` is a placeholder until replaced with verified campus coordinates. The official VVU logo and crest are not used.
 
 ## Moving to production later
 
@@ -195,4 +176,4 @@ To collect submissions from many people in one place, add a backend and keep the
 
 ## Licence
 
-MIT (see [LICENSE](LICENSE)). Third-party libraries in `vendor/` keep their own licences (Chart.js: MIT; Leaflet: BSD-2-Clause). Stand-in photos load from Unsplash under the Unsplash License and are not part of this repository.
+MIT (see [LICENSE](LICENSE)). Third-party libraries in `vendor/` keep their own licences (Chart.js: MIT; Leaflet: BSD-2-Clause).

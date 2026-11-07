@@ -2,18 +2,17 @@
 // Filters (search, dates, category, status, location) recompute everything.
 // Updates live when records change in another tab (e.g. the admin panel).
 import { initLayout } from '../layout.js';
-import { CONFIG, includeDemo } from '../data/db.js';
-import { esc, fmtNum, fmtDate, fmtDateTime, emptyHTML, errorHTML, demoBadge } from '../lib/dom.js';
+import { CONFIG } from '../data/db.js';
+import { esc, fmtNum, fmtDate, fmtDateTime } from '../lib/dom.js';
+import { quietEmpty } from '../lib/research-view.js';
 import { icon } from '../lib/icons.js';
 import { reportBaselineVsPilot, estimatedDailySaving } from '../lib/calc.js';
 import { ISSUE_TYPES, REPORT_STATUSES, ACTION_STATUSES, COMMITMENTS, FEEDBACK_CATEGORIES, PHASES, CHART_COLORS, label } from '../lib/labels.js';
 import { renderChart } from '../components/charts.js';
 import { plotHotspots, MAP_LEGEND } from '../components/map.js';
-import { SAMPLE_CHIP } from '../components/stats.js';
 
 const { db } = await initLayout();
 const $ = (id) => document.getElementById(id);
-const demo = includeDemo();
 const OPEN = ['submitted', 'under_review', 'assigned'];
 const PROGRESS = ['in_progress'];
 const DONE = ['resolved', 'closed'];
@@ -27,7 +26,7 @@ let data;
 async function load() {
   const [reports, readings, actions, pledges, feedback, locations] = await Promise.all(
     ['water_reports', 'water_readings', 'conservation_actions', 'pledges', 'feedback', 'campus_locations']
-      .map((t) => db.list(t, { includeDemo: demo })),
+      .map((t) => db.publicList(t)),
   );
   data = { reports, readings, actions, pledges, feedback, locations, locName: new Map(locations.map((l) => [l.id, l.name])) };
   const sel = $('df-loc');
@@ -58,8 +57,11 @@ let mapDrawn = false;
 async function draw() {
   const v = filters();
   const { reports, readings, actions, pledges, feedback } = v;
-  const usesDemo = [reports, readings, actions, pledges, feedback].some((arr) => arr.some((r) => r.is_demo));
-  $('dash-notice').innerHTML = usesDemo ? SAMPLE_CHIP : '';
+  const hasAny = ['reports', 'readings', 'actions', 'pledges', 'feedback'].some((k) => data[k].length);
+  $('dash-empty').innerHTML = hasAny ? '' : quietEmpty('No water reports or readings have been recorded yet. Figures will appear here as the project team records its fieldwork.', 'dashboard');
+  $('dash-body').hidden = !hasAny;
+  document.querySelectorAll('[data-dash-section]').forEach((x) => { x.hidden = !hasAny; });
+  if (!hasAny) return;
   const n = (set) => reports.filter((r) => set.includes(r.status)).length;
   const done = actions.filter((a) => ['completed', 'verified'].includes(a.status)).length;
 
@@ -83,14 +85,13 @@ async function draw() {
   $('dash-kpis').innerHTML = [
     stat('checkCircle', 'Resolution rate', pct(n(DONE), reports.length), 'Reports resolved or closed'),
     stat('wrench', 'Action completion', pct(done, actions.length), 'Actions completed or verified'),
-    stat('droplet', 'Estimated water saved', saved === null ? 'N/A' : `${fmtNum(saved)} <small>L/day</small>`, saved === null ? 'Needs 3 baseline and 3 pilot days' : 'Baseline minus pilot, comparable locations'),
-    stat('chart', 'Overall reduction', totalB ? `${fmtNum(((totalB - totalP) / totalB) * 100, 1)}%` : 'N/A', `${comparable.length} comparable location/method group(s)`),
+    ...(saved === null ? [] : [stat('droplet', 'Estimated water saved', `${fmtNum(saved)} <small>L/day</small>`, 'Baseline minus pilot, comparable locations')]),
+    ...(totalB ? [stat('chart', 'Overall reduction', `${fmtNum(((totalB - totalP) / totalB) * 100, 1)}%`, `${comparable.length} comparable location/method group(s)`)] : []),
   ].join('');
 
   // Charts
-  if (!reports.length) {
-    ['c-time', 'c-type', 'c-status'].forEach((id) => { $(id).innerHTML = emptyHTML('No reports match', 'Change or clear the filters.', 'chart'); });
-  } else {
+  ['c-time', 'c-type', 'c-status'].forEach((id) => { $(id).closest('.chart-card').hidden = !reports.length; });
+  if (reports.length) {
     const weekOf = (iso) => { const d = new Date(iso); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.toISOString().slice(0, 10); };
     const weeks = [...new Set(reports.map((r) => weekOf(r.submitted_at)))].sort();
     await renderChart($('c-time'), { type: 'line', labels: weeks.map((w) => `Week of ${fmtDate(w)}`),
@@ -103,15 +104,15 @@ async function draw() {
       datasets: [{ label: 'Reports', data: st.map((k) => reports.filter((r) => r.status === k).length), backgroundColor: CHART_COLORS, borderWidth: 2, borderColor: '#fff' }] });
   }
   const withData = bvp.filter((r) => r.baseline_avg_daily_l !== null || r.pilot_avg_daily_l !== null);
-  if (!withData.length) $('c-readings').innerHTML = emptyHTML('No readings in this selection', 'Readings appear once baseline or pilot measurements are recorded.', 'gauge');
-  else await renderChart($('c-readings'), { type: 'bar', labels: withData.map((r) => r.location_name), yTitle: 'Litres per day', datasets: [
+  $('c-readings').closest('.chart-card').hidden = !withData.length;
+  if (withData.length) await renderChart($('c-readings'), { type: 'bar', labels: withData.map((r) => r.location_name), yTitle: 'Litres per day', datasets: [
     { label: 'Baseline avg L/day', data: withData.map((r) => r.baseline_avg_daily_l), color: '#14532D' },
     { label: 'Pilot avg L/day', data: withData.map((r) => r.pilot_avg_daily_l), color: '#38BDF8' }] });
 
   // Baseline vs pilot table
-  $('dash-bvp').innerHTML = !bvp.length ? emptyHTML('Awaiting baseline data', 'Comparisons appear once baseline and pilot readings are recorded.', 'gauge')
+  $('dash-bvp').innerHTML = !bvp.length ? quietEmpty('No water readings have been recorded yet.', 'gauge')
     : `<table class="data"><thead><tr><th>Location</th><th>Method</th><th class="num">Baseline L/day</th><th class="num">Pilot L/day</th><th class="num">Saved L/day</th><th class="num">Reduction</th><th>Evidence</th></tr></thead><tbody>
-      ${bvp.map((r) => `<tr><td>${esc(r.location_name)} ${demoBadge(r.includes_demo)}</td><td>${esc(r.measurement_method)}</td>
+      ${bvp.map((r) => `<tr><td>${esc(r.location_name)}</td><td>${esc(r.measurement_method)}</td>
         <td class="num">${fmtNum(r.baseline_avg_daily_l, 1)}</td><td class="num">${fmtNum(r.pilot_avg_daily_l, 1)}</td>
         <td class="num">${fmtNum(r.saved_per_day_l, 1)}</td><td class="num">${r.reduction_pct === null ? 'N/A' : `${fmtNum(r.reduction_pct, 1)}%`}</td>
         <td>${r.meets_minimum_days ? '<span class="badge badge--verified">≥3 days each</span>' : `<span class="badge">${r.baseline_days}+${r.pilot_days} days</span>`}</td></tr>`).join('')}
@@ -129,18 +130,18 @@ async function draw() {
     ...feedback.map((x) => ({ at: x.submitted_at, ic: 'message', demo: x.is_demo, text: `Feedback received (${esc(label(FEEDBACK_CATEGORIES, x.category))})` })),
   ].filter((e) => e.at).sort((a, b) => String(b.at).localeCompare(String(a.at))).slice(0, 10);
   $('dash-activity').innerHTML = events.length
-    ? events.map((e) => `<li>${icon(e.ic, 18)}<span>${e.text} ${demoBadge(e.demo)}</span><span class="when">${esc(fmtDateTime(e.at))}</span></li>`).join('')
-    : `<li>${emptyHTML('No activity in this selection', '', 'info')}</li>`;
+    ? events.map((e) => `<li>${icon(e.ic, 18)}<span>${e.text}</span><span class="when">${esc(fmtDateTime(e.at))}</span></li>`).join('')
+    : `<li class="muted">No activity in this selection.</li>`;
 
   if (!mapDrawn) {
     mapDrawn = true;
     try {
-      const rows = await db.publicHotspots(demo);
-      if (!rows.length) $('dash-map').outerHTML = `<div class="placeholder">${emptyHTML('No mapped hotspots yet', 'Markers appear when locations are added with coordinates.', 'pin')}</div>`;
+      const rows = await db.publicHotspots();
+      if (!rows.length) $('dash-map').outerHTML = quietEmpty('No verified water conservation hotspots have been added yet.', 'pin');
       else { await plotHotspots($('dash-map'), rows, { center: CONFIG.MAP_CENTER, zoom: CONFIG.MAP_ZOOM }); $('dash-legend').innerHTML = MAP_LEGEND; }
     } catch (err) {
       console.error(err);
-      $('dash-map').innerHTML = errorHTML('The map could not be loaded (map tiles need an internet connection).');
+      $('dash-map').outerHTML = quietEmpty('The map needs an internet connection to load.', 'pin');
     }
   }
 }
@@ -150,7 +151,7 @@ try {
   await draw();
 } catch (err) {
   console.error(err);
-  $('dash-stats').innerHTML = errorHTML(`The dashboard could not be loaded. ${err?.message ?? ''}`);
+  $('dash-empty').innerHTML = quietEmpty('The dashboard could not be loaded right now. Please refresh the page.', 'dashboard');
 }
 let t;
 $('dash-filters').addEventListener('input', () => { clearTimeout(t); t = setTimeout(draw, 150); });

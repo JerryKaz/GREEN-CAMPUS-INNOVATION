@@ -1,30 +1,34 @@
 import { initLayout } from '../layout.js';
-import { loadPublicData, renderImpactStats, renderStatsError } from '../components/stats.js';
+import { loadPublicData, renderImpactStats } from '../components/stats.js';
 import { renderVideoSlot } from '../components/video.js';
-import { icon } from '../lib/icons.js';
+import { galleryImages } from '../lib/content.js';
+import { esc } from '../lib/dom.js';
 
 const { db } = await initLayout();
+const $ = (id) => document.getElementById(id);
 
-renderVideoSlot(document.getElementById('home-video'), db, 'documentary');
+renderVideoSlot($('home-video'), db, 'documentary');
 
-// The home page shows statistics only from real (non-demonstration) records.
-const host = document.getElementById('impact-stats');
+// Statistics appear only once real reports or readings have been recorded.
 async function drawStats() {
   try {
-    const data = await loadPublicData(db, { demo: false });
-    const hasReal = data.stats.reports_total > 0 || data.readings.length > 0;
-    if (!hasReal) {
-      host.innerHTML = `<div class="stat" style="grid-column:1/-1"><span class="stat__label">${icon('info', 16)}Awaiting verified data</span>
-        <span class="stat__value stat__value--pending">Figures appear here once the group records real reports and readings.</span>
-        <span class="stat__note">The dashboard shows how it works using clearly labelled demonstration data.</span></div>`;
-      document.getElementById('impact-notice').innerHTML = '';
-      return;
-    }
-    renderImpactStats(host, document.getElementById('impact-notice'), data);
+    const data = await loadPublicData(db);
+    const has = data.stats.reports_total > 0 || data.readings.length > 0;
+    $('impact-section').hidden = !has;
+    if (has) renderImpactStats($('impact-stats'), null, data);
   } catch (err) {
     console.error(err);
-    renderStatsError(host, err);
+    $('impact-section').hidden = true;
   }
 }
 drawStats();
 db.onChange(drawStats);
+
+// "Moments from the field": the latest published photos, or nothing at all.
+galleryImages(db).then((images) => {
+  const pick = [...images].reverse().slice(0, 5);
+  if (!pick.length) return;
+  $('home-moments').innerHTML = pick.map((m) => `<figure class="frame reveal is-visible" style="margin:0">
+    <img src="${esc(m.data_url || new URL(m.path, document.baseURI).href)}" alt="${esc(m.alt || m.caption || m.title)}" loading="lazy" style="width:100%;height:100%;object-fit:cover"></figure>`).join('');
+  $('moments-section').hidden = false;
+}).catch(() => {});

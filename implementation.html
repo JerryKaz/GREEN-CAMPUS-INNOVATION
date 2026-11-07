@@ -90,11 +90,12 @@
         <h2 id="results-title">Baseline and pilot measurements</h2>
         <p class="lead">Average daily litres for the same location and measurement method in each phase. Savings are shown only where both phases have been measured.</p>
       </div>
-      <div id="results-notice"></div>
       <div class="table-wrap" id="results-table"></div>
-      <h3 style="margin-top:48px">Before and after</h3>
-      <p class="muted">Drag the slider to compare photos taken at the same spot before and after the intervention.</p>
-      <div id="before-after"></div>
+      <div id="ba-block" hidden>
+        <h3 style="margin-top:48px">Before and after</h3>
+        <p class="muted">Drag the slider to compare photos taken at the same spot before and after the intervention.</p>
+        <div id="before-after"></div>
+      </div>
     </div>
   </section>
   <section class="section section--leaf" id="budget" aria-labelledby="budget-title">
@@ -103,7 +104,6 @@
         <h2 id="budget-title">Budget calculator (GHS)</h2>
         <p class="lead">Adjust quantities and costs to explore scenarios. Your changes are not saved, and each line shows whether its cost is an estimate, a quotation or an actual cost.</p>
       </div>
-      <div id="budget-notice"></div>
       <div id="budget-calc"></div>
     </div>
   </section>
@@ -171,7 +171,7 @@
       </div>
     </div>
   </section>
-  <section class="section section--forest" aria-labelledby="impl-video-title">
+  <section class="section section--forest" aria-labelledby="impl-video-title" data-video-section hidden>
     <div class="container split">
       <div>
         <h2 id="impl-video-title">See the solution in action</h2>
@@ -221,7 +221,7 @@
     </div>
     <div class="footer-base">
       <span>&copy; <span data-year></span> Green Campus Innovation. WaterWatch is a proposed campus prototype, not an official university system.</span>
-      <span>Submissions are saved only in the browser of the device used. Personal data is handled in line with Ghana's Data Protection Act, 2012 (Act 843).</span>
+      <span>Personal data is handled in line with Ghana's Data Protection Act, 2012 (Act 843).</span>
     </div>
   </div>
 </footer>

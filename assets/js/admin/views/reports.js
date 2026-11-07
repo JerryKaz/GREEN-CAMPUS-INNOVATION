@@ -1,6 +1,6 @@
 // Water Reports: filter, search, review, status workflow, assignment, CSV.
 import { esc, icon, fmtDateTime, statusBadge, sevBadge, demoBadge, panel, tableHTML, actionBtn, onActions,
-  selectHTML, formModal, readOnlyNote, toLocalInput } from '../ui.js';
+  selectHTML, formModal, readOnlyNote, toLocalInput, intro, primaryBtn } from '../ui.js';
 import { emptyHTML, downloadCSV, toast, confirmDialog, openModal } from '../../lib/dom.js';
 import { REPORT_STATUSES, SEVERITIES, ISSUE_TYPES, options, label } from '../../lib/labels.js';
 import { friendlyError, rules } from '../../lib/validate.js';
@@ -20,7 +20,7 @@ export async function render(ctx) {
   const f = { q: params.get('ref') ?? '', status: params.get('status') ?? '', severity: '', issue: '', loc: '', from: '', to: '' };
   const day = (iso) => String(iso ?? '').slice(0, 10);
 
-  el.innerHTML = `${can.write ? '' : readOnlyNote()}${panel(`Water reports`, '<div data-table></div>', {
+  el.innerHTML = `${intro('Problems people reported through the website form (leaks, broken pipes, overflowing tanks, faulty taps or flushes). Open a report to change its status or assign it. You can also add a problem you were told about in person.', primaryBtn('Add a Water Problem Report'))}${panel(`Water problem reports`, '<div data-table></div>', {
     iconName: 'clipboard',
     tools: `<input type="search" name="q" placeholder="Search reference, location or description" aria-label="Search reports" value="${esc(f.q)}">
       ${selectHTML('status', options(REPORT_STATUSES), f.status, 'All statuses', 'Filter by status')}
@@ -30,7 +30,7 @@ export async function render(ctx) {
       <label class="date-filter">From <input type="date" name="from" aria-label="Submitted from"></label>
       <label class="date-filter">To <input type="date" name="to" aria-label="Submitted to"></label>
       <button type="button" class="btn btn--ghost btn--sm" data-export>${icon('download', 16)}CSV</button>
-      ${can.write ? `<button type="button" class="btn btn--sm" data-add>${icon('plus', 16)}Add report</button>` : ''}`,
+`,
   })}`;
   const tableHost = el.querySelector('[data-table]');
   let visible = [];
@@ -77,7 +77,7 @@ export async function render(ctx) {
       { label: 'Status', value: (r) => label(REPORT_STATUSES, r.status) },
       { label: 'Assigned to', key: 'assigned_to' }, { label: 'Description', key: 'description' },
       { label: 'Anonymous', value: (r) => (r.is_anonymous ? 'yes' : 'no') },
-      { label: 'Demo record', value: (r) => (r.is_demo ? 'yes' : 'no') },
+      { label: 'Old record (not fieldwork)', value: (r) => (r.is_demo ? 'yes' : 'no') },
     ]);
   });
   onActions(tableHost, { open: (i) => openReport(visible[i]) });
@@ -95,7 +95,7 @@ export async function render(ctx) {
   ];
   const toRow = (v) => ({ ...v, observed_at: v.observed_at ? new Date(v.observed_at).toISOString() : null, location_id: v.location_id || null });
   el.querySelector('[data-add]')?.addEventListener('click', () => formModal({
-    title: 'Add water report', wide: true, fields: detailFields(true), submitLabel: 'Add report',
+    title: 'Add a Water Problem Report', wide: true, fields: detailFields(true), submitLabel: 'Save Report',
     values: { severity: 'medium', status: 'submitted' },
     onSubmit: async (v) => {
       const rec = await db.insert('water_reports', { ...toRow(v), is_anonymous: true, admin_notes: 'Entered by admin.' });

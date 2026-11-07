@@ -46,14 +46,14 @@
         <div>
           <p class="hero__kicker" style="color:var(--aqua);margin-bottom:8px"><i data-icon="dashboard" data-size="16"></i>VVU WaterWatch Dashboard</p>
           <h1 style="font-size:clamp(1.8rem,3.5vw,2.5rem)">Campus water at a glance</h1>
-          <p class="muted" style="margin:0">Every figure is calculated from the records stored in this browser. Nothing here is typed in by hand.</p>
+          <p class="muted" style="margin:0">Every figure is calculated from the reports, readings and actions recorded by the project. Nothing here is typed in by hand.</p>
         </div>
         <div class="btn-row">
           <a class="btn" href="solution.html#report"><i data-icon="alert" data-size="18"></i>Report a problem</a>
         </div>
       </div>
-      <div class="local-notice"><i data-icon="database" data-size="18"></i><p>This prototype has no central server: the dashboard shows the records saved on <strong>this device</strong>. Other visitors see the data on their own device.</p></div>
-      <div id="dash-notice"></div>
+      <div id="dash-empty"></div>
+      <div id="dash-body" hidden>
       <form class="dash-filters" id="dash-filters" role="search" aria-label="Filter dashboard">
         <div class="field"><label for="df-q">Search</label><input type="search" id="df-q" name="q" placeholder="Reference or location"></div>
         <div class="field"><label for="df-from">From</label><input type="date" id="df-from" name="from"></div>
@@ -66,19 +66,20 @@
       <div class="grid grid--4" id="dash-stats" aria-live="polite"></div>
       <h2 style="font-size:1.25rem;margin-top:36px">Conservation performance</h2>
       <div class="grid grid--4" id="dash-kpis"></div>
-    </div>
-  </section>
-  <section class="section section--leaf" style="padding-top:48px">
-    <div class="container">
-      <div class="grid grid--2">
-        <div class="chart-card"><h3>Reports over time</h3><div class="chart-box" id="c-time" data-label="Line chart of reports per week"></div></div>
-        <div class="chart-card"><h3>Reports by category</h3><div class="chart-box" id="c-type" data-label="Bar chart of reports by problem category"></div></div>
-        <div class="chart-card"><h3>Reports by status</h3><div class="chart-box" id="c-status" data-label="Doughnut chart of reports by status"></div></div>
-        <div class="chart-card"><h3>Recorded water use by phase</h3><div class="chart-box" id="c-readings" data-label="Bar chart of average daily litres, baseline versus pilot, per location"></div></div>
       </div>
     </div>
   </section>
-  <section class="section section--white" style="padding-top:48px">
+  <section class="section section--leaf" style="padding-top:48px" data-dash-section hidden>
+    <div class="container">
+      <div class="grid grid--2">
+        <div class="chart-card" data-chart-card><h3>Reports over time</h3><div class="chart-box" id="c-time" data-label="Line chart of reports per week"></div></div>
+        <div class="chart-card" data-chart-card><h3>Reports by category</h3><div class="chart-box" id="c-type" data-label="Bar chart of reports by problem category"></div></div>
+        <div class="chart-card" data-chart-card><h3>Reports by status</h3><div class="chart-box" id="c-status" data-label="Doughnut chart of reports by status"></div></div>
+        <div class="chart-card" data-chart-card><h3>Recorded water use by phase</h3><div class="chart-box" id="c-readings" data-label="Bar chart of average daily litres, baseline versus pilot, per location"></div></div>
+      </div>
+    </div>
+  </section>
+  <section class="section section--white" style="padding-top:48px" data-dash-section hidden>
     <div class="container">
       <div class="grid grid--2" style="align-items:start">
         <div>
@@ -137,7 +138,7 @@
     </div>
     <div class="footer-base">
       <span>&copy; <span data-year></span> Green Campus Innovation. WaterWatch is a proposed campus prototype, not an official university system.</span>
-      <span>Submissions are saved only in the browser of the device used. Personal data is handled in line with Ghana's Data Protection Act, 2012 (Act 843).</span>
+      <span>Personal data is handled in line with Ghana's Data Protection Act, 2012 (Act 843).</span>
     </div>
   </div>
 </footer>

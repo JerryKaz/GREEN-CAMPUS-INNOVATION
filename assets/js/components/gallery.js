@@ -4,19 +4,21 @@
 import { esc, fmtDate, openModal } from '../lib/dom.js';
 import { icon } from '../lib/icons.js';
 import { MEDIA_FOLDERS, label } from '../lib/labels.js';
-import { placeholderTile } from '../lib/media.js';
 import { siteURL } from '../lib/content.js';
+import { quietEmpty } from '../lib/research-view.js';
 
-const localNote = (m) => (m.__source === 'local' ? '<span class="local-note" title="Added in the admin panel on this device; not yet published">This device only</span>' : '');
+const src = (m) => m.data_url || siteURL(m.path);
+
+
 
 function figure(m, i) {
   return `<figure>
     <button type="button" data-i="${i}" aria-label="Open photo: ${esc(m.title || m.caption)}">
-      <img src="${esc(siteURL(m.path))}" alt="${esc(m.alt || m.caption)}" loading="lazy" decoding="async" data-img>
+      <img src="${esc(src(m))}" alt="${esc(m.alt || m.caption)}" loading="lazy" decoding="async" data-img>
     </button>
     <figcaption><strong>${esc(m.title || m.caption)}</strong>
       <span class="muted">${esc(label(MEDIA_FOLDERS, m.category))}${m.location ? ` · ${esc(m.location)}` : ''}${m.date ? ` · ${esc(fmtDate(m.date))}` : ''}</span>
-      ${m.caption && m.title ? `<span class="small">${esc(m.caption)}</span>` : ''} ${localNote(m)}</figcaption></figure>`;
+      ${m.caption && m.title ? `<span class="small">${esc(m.caption)}</span>` : ''}</figcaption></figure>`;
 }
 
 function openLightbox(list, start) {
@@ -24,7 +26,7 @@ function openLightbox(list, start) {
   const body = document.createElement('div');
   const draw = () => {
     const m = list[i];
-    body.innerHTML = `<div class="lightbox"><img src="${esc(siteURL(m.path))}" alt="${esc(m.alt || m.caption)}"></div>
+    body.innerHTML = `<div class="lightbox"><img src="${esc(src(m))}" alt="${esc(m.alt || m.caption)}"></div>
       <p style="margin:12px 0 4px">${esc(m.caption || '')}</p>
       <dl class="meta"><dt>Category</dt><dd>${esc(label(MEDIA_FOLDERS, m.category))}</dd>
         <dt>Date</dt><dd>${esc(fmtDate(m.date))}</dd><dt>Location</dt><dd>${esc(m.location || 'N/A')}</dd></dl>
@@ -54,29 +56,27 @@ export function beforeAfterPairs(images) {
   return [...groups.entries()].filter(([, g]) => g.before && g.after).map(([id, g]) => ({ id, ...g }));
 }
 
-export function renderBeforeAfter(host, images, { emptyText = 'Before-and-after photo pairs will appear here once the pilot has been photographed.' } = {}) {
+/** Before/after sliders. Returns false (and renders nothing) when there are no complete pairs. */
+export function renderBeforeAfter(host, images) {
   const pairs = beforeAfterPairs(images);
-  if (!pairs.length) {
-    host.innerHTML = `<div class="ba-grid">${['Before', 'After'].map((t, i) => placeholderTile(`${t} photo`, i ? 'aqua' : 'forest')).join('')}</div>
-      <p class="small muted" style="margin-top:12px">${esc(emptyText)}</p>`;
-    return;
-  }
+  if (!pairs.length) { host.innerHTML = ''; return false; }
   host.innerHTML = `<div class="ba-grid">${pairs.map((p) => `<figure class="ba">
       <div class="ba__stage">
-        <img src="${esc(siteURL(p.before.path))}" alt="Before: ${esc(p.before.alt || p.before.caption)}" loading="lazy">
-        <img class="ba__after" src="${esc(siteURL(p.after.path))}" alt="After: ${esc(p.after.alt || p.after.caption)}" loading="lazy">
+        <img src="${esc(src(p.before))}" alt="Before: ${esc(p.before.alt || p.before.caption)}" loading="lazy">
+        <img class="ba__after" src="${esc(src(p.after))}" alt="After: ${esc(p.after.alt || p.after.caption)}" loading="lazy">
         <span class="ba__divider" aria-hidden="true"></span>
         <span class="ba__label ba__label--before">Before · ${esc(fmtDate(p.before.date))}</span>
         <span class="ba__label ba__label--after">After · ${esc(fmtDate(p.after.date))}</span>
       </div>
       <input type="range" min="0" max="100" value="50" aria-label="Compare before and after: ${esc(p.after.title || p.id)}">
       <figcaption><strong>${esc(p.after.title || p.before.title || p.id)}</strong>
-        <span class="muted"> · ${esc(p.after.location || p.before.location || '')}</span> ${localNote(p.after)}
+        <span class="muted"> · ${esc(p.after.location || p.before.location || '')}</span>
         ${p.after.caption ? `<br><span class="small">${esc(p.after.caption)}</span>` : ''}</figcaption></figure>`).join('')}</div>`;
   host.querySelectorAll('.ba').forEach((fig) => {
     const stage = fig.querySelector('.ba__stage');
     fig.querySelector('input').addEventListener('input', (e) => stage.style.setProperty('--pos', `${e.target.value}%`));
   });
+  return true;
 }
 
 export function renderGallery(filtersHost, host, images) {
@@ -86,10 +86,9 @@ export function renderGallery(filtersHost, host, images) {
     const list = active === 'all' ? images : images.filter((p) => p.category === active);
     host.innerHTML = list.length
       ? `<div class="gallery">${list.map(figure).join('')}</div>`
-      : `<div class="gallery-slots">${Object.values(MEDIA_FOLDERS).map((c, i) => placeholderTile(c, ['forest', 'aqua', 'leaf'][i % 3])).join('')}</div>
-        <p class="small muted" style="margin-top:14px">${icon('camera', 16)} Original photographs from each stage of the project will appear here as the group adds them. No stock or generated images are used for research evidence.</p>`;
+      : quietEmpty('Research photographs will appear here after they have been uploaded and published.', 'camera');
     host.querySelectorAll('img[data-img]').forEach((img) => img.addEventListener('error', () => {
-      img.closest('button').outerHTML = `<div class="gallery__missing">${icon('image', 20)}<span>Photo not uploaded yet</span></div>`;
+      img.closest('figure').remove();
     }, { once: true }));
     host.querySelectorAll('[data-i]').forEach((b) => b.addEventListener('click', () => openLightbox(list, Number(b.dataset.i))));
   };

@@ -47,7 +47,7 @@
       <p class="hero__kicker"><i data-icon="bulb" data-size="16"></i>Our solution</p>
       <h1>Introducing VVU WaterWatch: A Smarter Way to Conserve Water.</h1>
       <p class="hero__lead">A campus process that connects the people who notice water problems with the people who fix them, and measures what changes.</p>
-      <div class="btn-row"><a class="btn btn--light btn--lg" href="#report"><i data-icon="alert" data-size="18"></i>Report water wastage</a><a class="btn btn--outline-light btn--lg" href="#video2-title"><i data-icon="play" data-size="18"></i>Watch the demo</a></div>
+      <div class="btn-row"><a class="btn btn--light btn--lg" href="#report"><i data-icon="alert" data-size="18"></i>Report water wastage</a><a class="btn btn--outline-light btn--lg" href="#video2-title" id="watch-demo" hidden><i data-icon="play" data-size="18"></i>Watch the demo</a></div>
     </div>
     <div class="waterline" style="--wave:#fff"></div>
   </section>
@@ -75,7 +75,6 @@
       <div>
         <h2 id="report-title">Report water wastage</h2>
         <p class="lead">Seen water leaking, a broken pipe, an overflowing tank, a faulty tap or a toilet that keeps flushing? Tell us where and what. It takes about a minute.</p>
-        <div class="local-notice"><i data-icon="info" data-size="18"></i><p><strong>Prototype notice:</strong> reports are saved in this browser on this device only and are not sent to a central server or to Estates/Facilities. For anything urgent, contact Estates/Facilities directly.</p></div>
         <ul class="muted" style="padding-left:18px">
           <li>Anonymous by default. Add your name only if you want a follow-up.</li>
           <li>You'll get a reference number to quote when following up.</li>
@@ -149,7 +148,6 @@
         <h2 id="solmap-title">Campus water hotspot map</h2>
         <p class="lead">Every report is tied to a location, so repeated problems show up as hotspots that Estates/Facilities can prioritise.</p>
       </div>
-      <div id="sol-map-notice"></div>
       <div class="map" id="sol-map" role="region" aria-label="Map of campus water hotspots"></div>
       <div id="sol-map-legend"></div>
     </div>
@@ -198,7 +196,7 @@
     </div>
   </section>
 
-  <section class="section section--forest" aria-labelledby="video2-title">
+  <section class="section section--forest" aria-labelledby="video2-title" data-video-section hidden>
     <div class="container split">
       <div>
         <h2 id="video2-title">WaterWatch in operation</h2>
@@ -272,7 +270,7 @@
     </div>
     <div class="footer-base">
       <span>&copy; <span data-year></span> Green Campus Innovation. WaterWatch is a proposed campus prototype, not an official university system.</span>
-      <span>Submissions are saved only in the browser of the device used. Personal data is handled in line with Ghana's Data Protection Act, 2012 (Act 843).</span>
+      <span>Personal data is handled in line with Ghana's Data Protection Act, 2012 (Act 843).</span>
     </div>
   </div>
 </footer>

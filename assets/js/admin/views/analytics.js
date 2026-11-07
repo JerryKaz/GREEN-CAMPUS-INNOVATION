@@ -1,5 +1,5 @@
 // Reports & Analytics: four saved reports computed from the local records (lib/calc.js).
-import { esc, icon, fmtDate, demoBadge, statusBadge, panel, tableHTML } from '../ui.js';
+import { esc, icon, fmtDate, demoBadge, statusBadge, panel, tableHTML, intro } from '../ui.js';
 import { emptyHTML, errorHTML, downloadCSV, fmtNum, fmtGHS } from '../../lib/dom.js';
 import { REPORT_STATUSES, ACTION_STATUSES, PHASES, CHART_COLORS, label } from '../../lib/labels.js';
 import { renderChart } from '../../components/charts.js';
@@ -84,12 +84,12 @@ const REPORTS = [
 ];
 
 export async function render({ db, el }) {
-  el.innerHTML = `
+  el.innerHTML = `${intro('Four ready-made summaries of your records, with charts. Use <strong>CSV</strong> to open one in Excel, or print the page. <a href="#/overview">← Back to the Dashboard</a>')}
     <div class="toolbar no-print" style="justify-content:space-between">
       <p class="muted" style="margin:0">Four saved reports, calculated from the records stored on this device.</p>
       <button type="button" class="btn btn--ghost btn--sm" data-print>${icon('download', 16)}Print / save all as PDF</button>
     </div>
-    <p class="small muted" style="margin:0">Generated ${esc(new Date().toLocaleString('en-GH'))}. Rows marked DEMO are demonstration records, not research findings.</p>
+    <p class="small muted" style="margin:0">Generated ${esc(new Date().toLocaleString('en-GH'))}. </p>
     ${REPORTS.map((r) => panel(r.title, `<div class="panel__body">
         ${r.note ? `<p class="small muted" style="margin-top:0">${esc(r.note)}</p>` : ''}
         <div class="chart-box" data-chart="${r.key}" data-label="${esc(r.title)}"></div></div>

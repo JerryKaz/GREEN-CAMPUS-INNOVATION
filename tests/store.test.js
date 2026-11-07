@@ -13,27 +13,35 @@ globalThis.fetch = async (url) => {
 };
 
 const { createStore } = await import('../assets/js/data/store.js');
-const cfg = { SEED_DEMO_DATA: true };
-const db = await createStore(cfg);
+const db = await createStore({});
 
-test('seeds at least 50 labelled demo records exactly once', async () => {
+test('starts with genuinely empty stores and never seeds records', async () => {
   const c = await db.counts();
-  const total = Object.values(c).reduce((s, x) => s + x.total, 0);
-  const demo = Object.values(c).reduce((s, x) => s + x.demo, 0);
-  assert.ok(total >= 50, `expected ≥50, got ${total}`);
-  assert.equal(total, demo);
-  const again = await createStore(cfg); // simulates a second visit
-  const c2 = await again.counts();
-  assert.deepEqual(c2, c);
+  assert.equal(Object.values(c).reduce((s, x) => s + x.total, 0), 0);
+  const again = await createStore({}); // second visit
+  assert.equal(Object.values(await again.counts()).reduce((s, x) => s + x.total, 0), 0);
 });
 
-test('clearing demo data does not re-seed on the next visit', async () => {
-  await db.deleteDemoData();
-  assert.equal(await db.demoCount(), 0);
-  const next = await createStore(cfg);
-  assert.equal(await next.demoCount(), 0);
-  const added = await db.loadDemoData();
-  assert.ok(added >= 50);
+test('old demonstration records are hidden publicly and removed only on request', async () => {
+  const loc = await db.insert('campus_locations', { name: 'Old demo tank', location_type: 'tank', latitude: 5.6, longitude: -0.18, is_verified: true, is_demo: true });
+  const real = await db.insert('campus_locations', { name: 'Hostel A', location_type: 'hostel', latitude: 5.61, longitude: -0.19, is_verified: true });
+  await db.insert('campus_locations', { name: 'Unverified spot', location_type: 'other', latitude: 5.62, longitude: -0.2 });
+  await db.insert('pledges', { commitment_type: 'avoid_waste', is_demo: true });
+  assert.equal(await db.demoCount(), 2);
+  assert.equal((await db.publicList('pledges')).length, 0);
+  const hot = await db.publicHotspots();
+  assert.deepEqual(hot.map((h) => h.id), [real.id]); // verified, real only
+  assert.equal((await db.publicStats()).pledges_total, 0);
+  const removed = await db.deleteDemoData();
+  assert.equal(removed, 2);
+  assert.ok(!(await db.get('campus_locations', loc.id)));
+  assert.ok(await db.get('campus_locations', real.id));
+});
+
+test('stores an uploaded photo entry and rejects non-image data', async () => {
+  const ok = await db.insert('media_items', { kind: 'image', title: 'Tap', category: 'water-hotspots', path: 'public/images/water-hotspots/tap.jpg', data_url: 'data:image/jpeg;base64,AAAA' });
+  assert.ok(ok.id);
+  await assert.rejects(db.insert('media_items', { kind: 'image', title: 'Bad', data_url: 'data:text/html;base64,AAAA' }), /valid image/);
 });
 
 test('validates records and relationships', async () => {
@@ -52,24 +60,24 @@ test('prevents duplicate submissions', async () => {
 });
 
 test('export / import round trip with duplicate protection', async () => {
+  const [loc] = await db.list('campus_locations');
+  await db.insert('water_readings', { location_id: loc.id, reading_date: '2026-10-01', consumption_value: 500, measurement_unit: 'L', measurement_method: 'Meter', phase: 'baseline' });
   const backup = await db.exportAll();
   assert.equal(backup.schema_version, 1);
   assert.ok(backup.exported_at && backup.export_id);
   const check = await db.inspectBackup(backup);
   assert.ok(check.ok, check.errors.join('; '));
   const merged = await db.importBackup(backup, { mode: 'merge' });
-  assert.equal(merged.added, 0); // every id already present
-  const again = await db.inspectBackup(backup);
-  assert.equal(again.alreadyImported, true);
+  assert.equal(merged.added, 0);
+  assert.equal((await db.inspectBackup(backup)).alreadyImported, true);
 
   const bad = structuredClone(backup);
-  bad.collections.water_reports[0].severity = 'apocalyptic';
+  bad.collections.water_readings[0].phase = 'someday';
   assert.equal((await db.inspectBackup(bad)).ok, false);
 
-  await db.deleteDemoData();
-  const before = (await db.counts()).water_reports.total;
+  await db.remove('water_readings', backup.collections.water_readings[0].id);
   await db.importBackup(backup, { mode: 'replace' });
-  assert.ok((await db.counts()).water_reports.total > before);
+  assert.equal((await db.counts()).water_readings.total, 1);
 });
 
 test('location delete is blocked while readings reference it', async () => {

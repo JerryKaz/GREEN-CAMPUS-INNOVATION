@@ -38,13 +38,27 @@
         <button class="icon-btn sidebar-toggle" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="Open navigation"><i data-icon="menu"></i></button>
         <h1 class="topbar__title" id="view-title">Overview</h1>
         <div class="topbar__user">
-          <span class="user-chip"><span>Project admin</span><span class="badge" id="storage-badge">Local data</span></span>
-          <button class="btn btn--ghost btn--sm" type="button" data-signout><i data-icon="logout" data-size="16"></i><span class="hide-sm">Log out</span></button>
+          <button class="icon-btn bell" type="button" id="bell" data-bell aria-haspopup="dialog" aria-expanded="false" aria-controls="drawer" aria-label="Notifications"><i data-icon="bell"></i><span class="bell__count" hidden></span></button>
+          <button class="btn btn--ghost btn--sm" type="button" data-signout><i data-icon="logout" data-size="16"></i><span class="hide-sm">Logout</span></button>
         </div>
       </header>
-      <div id="admin-ribbon"></div>
       <main id="admin-main" class="view" tabindex="-1"></main>
     </div>
+  </div>
+
+  <div class="drawer" id="drawer" hidden>
+    <aside class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+      <header class="drawer__head">
+        <h2 id="drawer-title">Notifications</h2>
+        <button type="button" class="icon-btn" data-close-drawer aria-label="Close notifications"><i data-icon="x"></i></button>
+      </header>
+      <div class="drawer__tools">
+        <div class="seg-chips"><button type="button" class="chip" data-filter="all" aria-pressed="true">All</button><button type="button" class="chip" data-filter="unread" aria-pressed="false">Unread</button></div>
+        <button type="button" class="btn btn--ghost btn--sm" data-read-all>Mark all as read</button>
+      </div>
+      <div class="drawer__list" data-list></div>
+      <footer class="drawer__foot"><button type="button" class="btn btn--ghost btn--block btn--sm" data-view-all>Open the notification centre</button></footer>
+    </aside>
   </div>
 </body>
 </html>

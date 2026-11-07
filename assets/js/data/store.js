@@ -11,19 +11,24 @@ import { SCHEMA_VERSION, APP_ID, COLLECTIONS, validateRecord } from './schema.js
 import { statsFromRows, reportIssuesByLocationStatus, reportDailyConsumption,
   reportBaselineVsPilot, reportConservationActions } from '../lib/calc.js';
 
-const SAMPLE_URL = new URL('../../../public/data/sample-data.json', import.meta.url);
 const LEGACY_KEY = 'gci_demo_db_v2'; // previous localStorage-based demo database
+// Collections that may still hold records flagged is_demo from earlier versions of the site.
 const DEMO_COLLECTIONS = ['campus_locations', 'water_reports', 'water_readings', 'conservation_actions', 'pledges', 'feedback', 'budget_items'];
 const REF_ALPHABET = 'BCDFGHJKMNPQRSTVWXYZ23456789';
 
 // Settings the group edits from the admin area. Empty until real data exists.
 export const DEFAULT_SETTINGS = {
-  research_findings: { challenges: '', processes: '', causes: '', experiences: '', opportunities: '' },
-  observations: { days_observed: null, period: '', summary: '' },
-  interviews: { estates_count: null, estates_summary: '', students_count: null, students_summary: '', themes: '' },
-  pilot: { location: '', testing_date: '', users: null, feedback: '', problems: '', improvements: '' },
+  // Research information entered by the admin. Nothing is shown publicly until a
+  // section is saved with "Publish", so incomplete drafts are safe.
+  research: {
+    title: '', background: '', problem: '', objectives: '', methodology: '', methodology_source: '', recommendations: '',
+    findings: { challenges: '', processes: '', causes: '', experiences: '', opportunities: '' },
+    observations: [], interviews: [],
+    published: { overview: false, methodology: false, findings: false, observations: false, interviews: false, recommendations: false },
+  },
+  pilot: { location: '', testing_date: '', users: null, feedback: '', problems: '', improvements: '', published: false },
   tariff: { value: null, unit: 'm3', source: '', verified: false },
-  roadmap: { current_phase: 1 },
+  roadmap: { current_phase: null },
   contact: { email: '', phone: '', office: '', supervisor: '', team: '' },
 };
 
@@ -59,19 +64,7 @@ export async function createStore(config) {
     if (errs.length) throw new ValidationError(errs[0]);
   };
 
-  // ---- first-run initialisation ---------------------------------------------
-  let sampleCache;
-  async function loadSample() {
-    if (!sampleCache) {
-      const res = await fetch(SAMPLE_URL, { cache: 'no-cache' });
-      if (!res.ok) throw new Error(`Could not load sample data (${res.status}).`);
-      const json = await res.json();
-      if (!json?.collections) throw new Error('Sample data file is malformed.');
-      sampleCache = json;
-    }
-    return structuredClone(sampleCache.collections);
-  }
-
+  // ---- first-run initialisation (no records are ever created automatically) ----
   async function migrateLegacy() {
     let legacy;
     try { legacy = JSON.parse(localStorage.getItem(LEGACY_KEY) ?? 'null'); } catch { legacy = null; }
@@ -87,15 +80,10 @@ export async function createStore(config) {
 
   async function init() {
     if (!(await getMeta('initialised'))) {
-      const migrated = await migrateLegacy().catch((e) => { console.warn('Legacy migration skipped', e); return false; });
-      const empty = (await Promise.all(COLLECTIONS.map((s) => be.count(s)))).every((n) => n === 0);
-      if (!migrated && empty && config.SEED_DEMO_DATA) {
-        // Seed only when the database is empty. If the sample file cannot be fetched
-        // (e.g. offline on a first visit) we leave the flag unset and try next time.
-        const sample = await loadSample();
-        for (const s of DEMO_COLLECTIONS) if (sample[s]?.length) await be.putMany(s, sample[s]);
-        await setMeta('demo_seeded_at', now());
-      }
+      // Records from the old localStorage version are carried over (never discarded);
+      // any demonstration records among them stay hidden from the public site until
+      // the administrator reviews and removes them in Data Backup.
+      await migrateLegacy().catch((e) => { console.warn('Legacy migration skipped', e); return false; });
       await setMeta('initialised', now());
     }
     for (const [key, value] of Object.entries(DEFAULT_SETTINGS)) {
@@ -244,21 +232,25 @@ export async function createStore(config) {
   }
 
   // ---- aggregates for public pages ------------------------------------------
-  async function publicStats(includeDemo) {
-    const f = (rows) => (includeDemo ? rows : rows.filter((r) => !r.is_demo));
+  // Public pages never include records flagged as demonstration data.
+  const real = (rows) => rows.filter((r) => !r.is_demo);
+  async function publicList(t, opts = {}) { return list(t, { ...opts, includeDemo: false }); }
+
+  async function publicStats() {
+    const f = real;
     const [reports, pledges, actions] = await Promise.all([be.getAll('water_reports'), be.getAll('pledges'), be.getAll('conservation_actions')]);
     return statsFromRows({ reports: f(reports), pledges: f(pledges), actions: f(actions) });
   }
 
-  /** Locations that have coordinates, each with a public summary of linked reports. */
-  async function publicHotspots(includeDemo) {
+  /** VERIFIED locations with coordinates, each with a public summary of linked reports. */
+  async function publicHotspots() {
     const [locs, reports] = await Promise.all([be.getAll('campus_locations'), be.getAll('water_reports')]);
     return locs
-      .filter((l) => Number.isFinite(l.latitude) && Number.isFinite(l.longitude) && (includeDemo || !l.is_demo))
+      .filter((l) => Number.isFinite(l.latitude) && Number.isFinite(l.longitude) && l.is_verified && !l.is_demo)
       .map((l) => ({
         id: l.id, name: l.name, location_type: l.location_type, description: l.description ?? '',
         latitude: l.latitude, longitude: l.longitude, is_verified: !!l.is_verified, is_demo: !!l.is_demo,
-        reports: reports.filter((r) => r.location_id === l.id && (includeDemo || !r.is_demo))
+        reports: reports.filter((r) => r.location_id === l.id && !r.is_demo)
           .map((r) => ({ issue_type: r.issue_type, severity: r.severity, status: r.status, submitted_at: r.submitted_at, is_demo: !!r.is_demo })),
       }));
   }
@@ -314,35 +306,7 @@ export async function createStore(config) {
     });
     await setMeta('demo_cleared_at', now());
     changed('demo');
-  }
-
-  /** Add demonstration records that are missing (does not touch edited ones). */
-  async function loadDemoData() {
-    const sample = await loadSample();
-    let added = 0;
-    for (const s of DEMO_COLLECTIONS) {
-      const have = new Set((await be.getAll(s)).map((r) => r.id));
-      const missing = (sample[s] ?? []).filter((r) => !have.has(r.id));
-      added += missing.length;
-      if (missing.length) await be.putMany(s, missing);
-    }
-    await setMeta('demo_seeded_at', now());
-    changed('demo');
-    return added;
-  }
-
-  /** Reset every demonstration record to its original state. Real records are untouched. */
-  async function restoreDemoData() {
-    const sample = await loadSample();
-    const current = Object.fromEntries(await Promise.all(DEMO_COLLECTIONS.map(async (s) => [s, await be.getAll(s)])));
-    await be.atomic(DEMO_COLLECTIONS, (st) => {
-      for (const s of DEMO_COLLECTIONS) {
-        current[s].filter((r) => r.is_demo).forEach((r) => st[s].delete(r.id));
-        (sample[s] ?? []).forEach((r) => st[s].put(r));
-      }
-    });
-    await setMeta('demo_seeded_at', now());
-    changed('demo');
+    return delLocs.size + DEMO_COLLECTIONS.filter((n) => n !== 'campus_locations').reduce((t, n) => t + all[n].filter((r) => r.is_demo).length, 0);
   }
 
   // ---- backup and restore -----------------------------------------------------
@@ -468,7 +432,7 @@ export async function createStore(config) {
     list, get: (t, id) => be.get(t, id), insert, update, remove,
     submitReport, submitPledge, submitFeedback,
     publicStats, publicHotspots, settings, saveSetting, savedSettingKeys, report, photoUrl,
-    demoCount, deleteDemoData, loadDemoData, restoreDemoData,
+    publicList, demoCount, deleteDemoData,
     exportAll, recordBackup, inspectBackup, importBackup,
     counts, storageInfo, requestPersistence, getMeta,
     onChange(cb) { listeners.add(cb); return () => listeners.delete(cb); },

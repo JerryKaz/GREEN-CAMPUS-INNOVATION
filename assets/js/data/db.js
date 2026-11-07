@@ -8,5 +8,4 @@ export function getDB() {
   return storePromise;
 }
 
-export const includeDemo = () => CONFIG.SHOW_DEMO_DATA === true;
 export { CONFIG };

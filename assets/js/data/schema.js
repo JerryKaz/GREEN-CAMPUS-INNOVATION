@@ -102,6 +102,10 @@ export function validateRecord(store, rec, existing) {
   }
   for (const f of s.dates ?? []) if (rec[f] && !isDateOnly(rec[f])) errs.push(`${f} must be a date (YYYY-MM-DD).`);
   for (const f of s.timestamps ?? []) if (rec[f] && !isIso(rec[f])) errs.push(`${f} must be a date and time.`);
+  if (store === 'media_items' && rec.data_url !== undefined && rec.data_url !== null && rec.data_url !== '') {
+    if (typeof rec.data_url !== 'string' || !/^data:image\/(jpeg|png|webp);base64,/.test(rec.data_url)) errs.push('Photo data is not a valid image.');
+    else if (rec.data_url.length > 6_000_000) errs.push('Photo is too large.');
+  }
   if (existing) {
     for (const [f, target] of Object.entries(s.refs ?? {})) {
       if (rec[f] && existing[target] && !existing[target].has(rec[f])) errs.push(`${f} points to a ${target.replace('_', ' ')} record that does not exist.`);

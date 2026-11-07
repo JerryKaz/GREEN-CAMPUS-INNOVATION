@@ -76,7 +76,7 @@ function coerce(fields, raw) {
  * Modal with a validated form. `layout` groups field names into rows of two.
  * onSubmit(values) may throw; the message appears in the form.
  */
-export function formModal({ title, fields, values = {}, submitLabel = 'Save', onSubmit, wide = false, intro = '', afterRender }) {
+export function formModal({ title, fields, values = {}, submitLabel = 'Save Changes', onSubmit, wide = false, intro = '', afterRender }) {
   const byName = Object.fromEntries(fields.map((f) => [f.name, f]));
   const rows = [];
   for (let i = 0; i < fields.length; i++) {
@@ -146,3 +146,20 @@ export const toLocalInput = (iso) => {
 };
 
 export const readOnlyNote = () => `<p class="readonly-note">${icon('shield', 16)}Your role is read-only. Ask an administrator for Staff access to make changes.</p>`;
+
+/**
+ * Plain-language header for every admin section: what it is for, plus the main action.
+ * `action` is HTML for the primary button (give it data-add so "?add=1" links can open it).
+ */
+export const intro = (text, action = '', extra = '') =>
+  `<div class="page-intro"><div class="page-intro__text"><p>${text}</p>${extra}</div>${action ? `<div class="page-intro__action">${action}</div>` : ''}</div>`;
+
+export const primaryBtn = (label, iconName = 'plus', attrs = 'data-add') =>
+  `<button type="button" class="btn" ${attrs}>${icon(iconName, 18)}${esc(label)}</button>`;
+
+/** Draft / published status chip used by Research Information and Website Content. */
+export const statusChip = (state) => ({
+  empty: '<span class="chip-status chip-status--empty">Not started</span>',
+  draft: '<span class="chip-status chip-status--draft">Draft: not on the website</span>',
+  published: '<span class="chip-status chip-status--live">Published on the website</span>',
+}[state]);

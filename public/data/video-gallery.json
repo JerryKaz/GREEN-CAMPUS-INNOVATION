@@ -1,19 +1,4 @@
 {
-  "notice": "Video slots. Paste a YouTube or Google Drive share link into 'url' (Drive files must be shared as 'Anyone with the link'). Do not commit video files to the repository.",
-  "videos": [
-    {
-      "slot": "documentary",
-      "title": "Video 1: Problem documentary",
-      "description": "Explains the water wastage problem on campus, with observations and interviews.",
-      "duration": "3 to 5 minutes",
-      "url": ""
-    },
-    {
-      "slot": "solution-demo",
-      "title": "Video 2: Solution demonstration",
-      "description": "Demonstrates VVU WaterWatch and the pilot intervention.",
-      "duration": "2 to 3 minutes",
-      "url": ""
-    }
-  ]
+  "notice": "Published project videos (YouTube or Google Drive links). Empty until the administrator adds them in Admin > Photos and Videos and publishes them.",
+  "videos": []
 }

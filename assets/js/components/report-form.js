@@ -78,7 +78,7 @@ function showSuccess(form, reference) {
   panel.setAttribute('tabindex', '-1');
   panel.innerHTML = `<span class="success-icon">${icon('checkCircle', 32)}</span>
     <h3>Report saved, thank you</h3>
-    <p class="muted">Keep this reference number to follow the report on this device. In this prototype the report is stored in this browser only and has <strong>not</strong> been sent to a central server or to Estates/Facilities.</p>
+    <p class="muted">Your report has been recorded on this device. Keep this reference number when following up.</p>
     <div class="ref" aria-label="Reference number">${esc(reference)}</div>
     <div class="btn-row" style="justify-content:center">
       <button type="button" class="btn btn--ghost" data-copy>${icon('clipboard', 18)} Copy reference</button>

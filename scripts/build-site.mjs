@@ -12,7 +12,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const out = join(root, '_site');
 const INCLUDE = ['index.html', 'research.html', 'solution.html', 'implementation.html', 'feedback.html', 'dashboard.html',
   '404.html', 'robots.txt', 'sw.js', 'CNAME', 'admin', 'assets', 'public', 'vendor'];
-const SKIP = [/\.md$/i, /\.mp4$/i, /\.mov$/i, /(^|\/)\.gitkeep$/, /(^|\/)\.DS_Store$/];
+const SKIP = [/sample-data\.json$/, /demo-seed\.js$/, /\.md$/i, /\.mp4$/i, /\.mov$/i, /(^|\/)\.gitkeep$/, /(^|\/)\.DS_Store$/];
 
 rmSync(out, { recursive: true, force: true });
 mkdirSync(out);

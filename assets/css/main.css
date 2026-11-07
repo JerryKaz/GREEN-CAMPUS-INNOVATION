@@ -584,3 +584,19 @@ body.has-photo-hero .site-header:not(.is-solid):not(.is-menu-open) .nav-toggle {
 .contact-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
 .contact-list li { display: flex; gap: 10px; align-items: flex-start; }
 .contact-list .placeholder-text { color: var(--muted); font-style: italic; }
+
+/* ---- Calm empty states and research content ------------------------------- */
+.empty-note { display: flex; gap: 14px; align-items: center; padding: 22px 24px; border: 1px dashed var(--line-strong); border-radius: var(--radius-lg, 14px);
+  background: rgba(255,255,255,.7); color: var(--muted); max-width: 760px; }
+.empty-note svg { flex: none; color: var(--green); opacity: .75; }
+.empty-note p { margin: 0; font-size: .98rem; line-height: 1.55; }
+.section--forest .empty-note, .section--aqua .empty-note { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.3); color: #E6F4EA; }
+.research-block { margin-bottom: 32px; }
+.research-block h4, .research-part h4 { margin: 18px 0 6px; font-size: 1rem; }
+.research-title { font-size: 1.35rem; margin: 0 0 8px; }
+.research-part { margin-top: 36px; }
+.research-part > h3 { font-size: 1.25rem; margin: 0 0 14px; }
+.entry-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.entry-list li { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; }
+.entry-list__meta { display: flex; align-items: center; gap: 8px; color: var(--ink-2); font-size: .9rem; }
+.entry-list__meta svg { color: var(--aqua); }

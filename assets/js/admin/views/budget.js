@@ -1,5 +1,5 @@
 // Budget items (admin only edits). Totals come from the same budgetTotals() as the public calculator.
-import { esc, icon, demoBadge, panel, actionBtn, onActions, formModal } from '../ui.js';
+import { esc, icon, demoBadge, panel, actionBtn, onActions, formModal, intro, primaryBtn } from '../ui.js';
 import { emptyHTML, toast, confirmDialog, downloadCSV, fmtGHS, fmtNum } from '../../lib/dom.js';
 import { BUDGET_CATEGORIES, COST_BASIS, options, label } from '../../lib/labels.js';
 import { friendlyError } from '../../lib/validate.js';
@@ -17,11 +17,11 @@ const FIELDS = [
 
 export async function render({ db, el, can }) {
   const items = await db.list('budget_items', { order: ['category', 'asc'] });
-  el.innerHTML = `${can.admin ? '' : `<p class="readonly-note">${icon('shield', 16)}Only administrators can change the budget.</p>`}
+  el.innerHTML = `${intro('List each project cost and say whether it is an estimate, a supplier quotation or the actual amount paid. The budget appears on the Implementation page. <a href="#/content">← Back to Website Content</a>', primaryBtn('Add Budget Item'))}
     ${panel('Project budget (GHS)', '<div data-table></div>', {
       iconName: 'coins',
       tools: `<button type="button" class="btn btn--ghost btn--sm" data-export>${icon('download', 16)}CSV</button>
-        ${can.admin ? `<button type="button" class="btn btn--sm" data-add>${icon('plus', 16)}Add item</button>` : ''}`,
+`,
     })}`;
   const host = el.querySelector('[data-table]');
 
@@ -41,7 +41,7 @@ export async function render({ db, el, can }) {
   };
 
   const open = (it) => formModal({
-    title: it ? 'Edit budget item' : 'Add budget item', fields: FIELDS,
+    title: it ? 'Edit Budget Item' : 'Add Budget Item', fields: FIELDS,
     values: it ?? { quantity: 1, unit_cost: 0, cost_basis: 'estimate' },
     onSubmit: async (v) => {
       if (it) Object.assign(it, await db.update('budget_items', it.id, v));

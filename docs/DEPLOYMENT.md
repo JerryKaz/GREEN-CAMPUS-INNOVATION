@@ -70,7 +70,7 @@ When the DNS check passes, GitHub issues a free certificate (this can take up to
 
 ## Important: data and domains
 
-IndexedDB data belongs to a **specific address**. Records saved at `username.github.io/repo/` will **not** appear at `www.your-domain.com`, and `www` and the apex are also separate. Before switching, export a backup on the old address (Admin → Data Management) and import it on the new one, and always present from the final address.
+IndexedDB data belongs to a **specific address**. Records saved at `username.github.io/repo/` will **not** appear at `www.your-domain.com`, and `www` and the apex are also separate. Before switching, export a backup on the old address (Admin → Data Backup) and import it on the new one, and always present from the final address.
 
 ## Troubleshooting
 
