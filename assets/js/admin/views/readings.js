@@ -3,7 +3,8 @@ import { esc, icon, fmtDate, demoBadge, panel, tableHTML, actionBtn, onActions, 
 import { emptyHTML, downloadCSV, toast, confirmDialog, fmtNum } from '../../lib/dom.js';
 import { PHASES, UNITS, options, label } from '../../lib/labels.js';
 import { friendlyError, rules } from '../../lib/validate.js';
-import { toLitres } from '../../lib/calc.js';
+import { toLitres, reportBaselineVsPilot } from '../../lib/calc.js';
+import { fmtGHS } from '../../lib/dom.js';
 
 const METHODS = ['Water meter reading', 'Sub-meter reading', 'Bucket-and-stopwatch estimate', 'Tank level gauge', 'Utility bill (daily average)'];
 
@@ -19,6 +20,7 @@ export async function render({ db, el, can, profile }) {
 
   el.innerHTML = `${can.write ? '' : readOnlyNote()}
     <div class="notice">${icon('info', 18)}<p>Record one reading per location, date, phase and method. Keep the <strong>same method</strong> for baseline and pilot at a location, reports only compare like with like. Values in m³ are converted to litres (1 m³ = 1,000 L) for charts.</p></div>
+    ${panel('Water conservation calculations', '<div data-calc></div>', { iconName: 'chart' })}
     ${panel('Water readings', '<div data-table></div>', {
       iconName: 'gauge',
       tools: `${selectHTML('loc', locations.map((l) => ({ value: l.id, text: l.name })), '', 'All locations', 'Filter by location')}
@@ -27,6 +29,35 @@ export async function render({ db, el, can, profile }) {
         ${can.write ? `<button type="button" class="btn btn--sm" data-add>${icon('plus', 16)}Enter reading</button>` : ''}`,
     })}`;
   const host = el.querySelector('[data-table]');
+  const calcHost = el.querySelector('[data-calc]');
+  const tariff = (await db.settings()).tariff ?? {};
+  const tariffOk = tariff.verified && Number(tariff.value) > 0;
+
+  // Recomputed from the stored readings after every add, edit or delete.
+  const drawCalc = () => {
+    const rows = reportBaselineVsPilot(readings, locations).filter((r) => r.baseline_days && r.pilot_days);
+    const money = (litresPerDay) => (tariffOk && litresPerDay > 0
+      ? (tariff.unit === 'L' ? litresPerDay : litresPerDay / 1000) * Number(tariff.value) : null);
+    calcHost.innerHTML = `<div class="panel__body">
+      <p class="small muted" style="margin-top:0">Water saved = baseline − pilot (average litres per day, same location and method).
+        Reduction = saved ÷ baseline × 100. Financial saving = saved × verified tariff
+        ${tariffOk ? `(<strong>${esc(fmtGHS(tariff.value))} per ${tariff.unit === 'L' ? 'litre' : 'm³'}</strong>${tariff.source ? `, ${esc(tariff.source)}` : ''})` : '(<strong>no verified tariff yet</strong>: set it in <a href="#/settings">Site Content</a>)'}.
+        Annual figures are shown only when both phases have at least 7 days of readings, and assume those days are typical of the year.</p>
+      ${rows.length ? `<div class="table-wrap"><table class="data"><thead><tr><th>Location</th><th>Method</th><th class="num">Days (B/P)</th>
+        <th class="num">Baseline L/day</th><th class="num">Pilot L/day</th><th class="num">Saved L/day</th><th class="num">Reduction</th>
+        <th class="num">GH₵/day</th><th class="num">Est. annual L</th></tr></thead><tbody>
+        ${rows.map((r) => {
+          const annual = r.baseline_days >= 7 && r.pilot_days >= 7 && r.saved_per_day_l > 0 ? r.saved_per_day_l * 365 : null;
+          const m = money(r.saved_per_day_l);
+          return `<tr><td>${esc(r.location_name)} ${demoBadge(r.includes_demo)}</td><td>${esc(r.measurement_method)}</td>
+            <td class="num">${r.baseline_days}/${r.pilot_days}${r.meets_minimum_days ? '' : ' <span class="badge badge--estimate" title="Needs at least 3 days in each phase">&lt;3</span>'}</td>
+            <td class="num">${fmtNum(r.baseline_avg_daily_l, 1)}</td><td class="num">${fmtNum(r.pilot_avg_daily_l, 1)}</td>
+            <td class="num"><strong>${fmtNum(r.saved_per_day_l, 1)}</strong></td>
+            <td class="num">${r.reduction_pct === null ? 'N/A' : `${fmtNum(r.reduction_pct, 1)}%`}</td>
+            <td class="num">${m === null ? 'N/A' : esc(fmtGHS(m))}</td><td class="num">${annual === null ? 'N/A' : fmtNum(annual)}</td></tr>`;
+        }).join('')}</tbody></table></div>`
+        : emptyHTML('Nothing to compare yet', 'Enter baseline and pilot readings for the same location and method.', 'chart')}</div>`;
+  };
 
   const draw = () => {
     visible = readings.filter((r) => (!f.loc || r.location_id === f.loc) && (!f.phase || r.phase === f.phase));
@@ -46,6 +77,7 @@ export async function render({ db, el, can, profile }) {
       actions: can.write ? (r, i) => `${actionBtn('edit', i, 'edit', 'Edit reading')}${actionBtn('del', i, 'trash', 'Delete reading', true)}` : null,
     }) + `<p class="small muted" style="padding:10px 20px;margin:0">${visible.length} reading(s) · ${esc(fmtNum(litres))} L in total</p>`
       : emptyHTML('No readings recorded', locations.length ? 'Enter baseline readings for at least three days per location.' : 'Add a campus location first, then record readings for it.', 'gauge');
+    drawCalc();
   };
 
   const fields = [

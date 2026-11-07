@@ -1,19 +1,11 @@
-// Data-layer facade. Picks the Supabase adapter when configured, otherwise the
-// in-browser demo adapter, so the site always runs (e.g. for the assessment panel).
+// Data-layer facade: one shared store instance per page.
 import { CONFIG } from '../config.js';
+import { createStore } from './store.js';
 
-let adapterPromise;
-
+let storePromise;
 export function getDB() {
-  adapterPromise ??= (async () => {
-    if (CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY) {
-      const { createSupabaseAdapter } = await import('./supabase-adapter.js');
-      return createSupabaseAdapter(CONFIG);
-    }
-    const { createLocalAdapter } = await import('./local-adapter.js');
-    return createLocalAdapter(CONFIG);
-  })();
-  return adapterPromise;
+  storePromise ??= createStore(CONFIG);
+  return storePromise;
 }
 
 export const includeDemo = () => CONFIG.SHOW_DEMO_DATA === true;

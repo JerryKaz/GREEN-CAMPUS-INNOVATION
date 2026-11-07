@@ -1,9 +1,10 @@
-// Enumerations — must match the CHECK constraints in 001_schema.sql.
+// Enumerations shared by forms, admin views and record validation (data/schema.js).
 export const ISSUE_TYPES = {
-  leaking_tap: 'Leaking tap',
+  water_leak: 'Water leakage (wall, floor or ground)',
+  leaking_tap: 'Leaking or faulty tap',
   broken_pipe: 'Broken pipe',
   overflowing_tank: 'Overflowing tank',
-  faulty_flush: 'Faulty flush system',
+  faulty_flush: 'Faulty toilet flush',
   unnecessary_usage: 'Unnecessary water usage',
   other: 'Other water-related problem',
 };
@@ -35,10 +36,14 @@ export const FEEDBACK_CATEGORIES = {
   pilot: 'Pilot activities', suggestion: 'Idea or suggestion', other: 'Other',
 };
 export const FEEDBACK_STATUSES = { new: 'New', reviewed: 'Reviewed', archived: 'Archived' };
-export const GALLERY_CATEGORIES = {
-  problem_areas: 'Water problem areas', observations: 'Campus observations',
-  interviews: 'Interviews', research: 'Research activities', ideation: 'Ideation sessions',
-  prototype: 'Prototype development', pilot: 'Pilot implementation', before_after: 'Before & after',
+// Image folders under public/images/ (the folder name is the gallery category).
+export const MEDIA_FOLDERS = {
+  campus: 'Campus', 'water-hotspots': 'Water hotspots', research: 'Research activities',
+  interviews: 'Interviews', prototype: 'Prototype', pilot: 'Pilot', 'before-after': 'Before & after',
+};
+// Video slots, matching public/videos/ sub-folders.
+export const VIDEO_SLOTS = {
+  documentary: 'Video 1: Problem documentary', 'solution-demo': 'Video 2: Solution demonstration', interviews: 'Interview video',
 };
 export const BUDGET_CATEGORIES = {
   leak_detection: 'Leak detection materials', plumbing_repairs: 'Plumbing repairs',
@@ -47,7 +52,6 @@ export const BUDGET_CATEGORIES = {
   maintenance: 'Maintenance', other: 'Other',
 };
 export const COST_BASIS = { estimate: 'Estimate', quotation: 'Quotation', actual: 'Actual' };
-export const ROLES = { admin: 'Admin', staff: 'Staff', viewer: 'Viewer' };
 
 export const SEVERITY_COLORS = { low: '#38BDF8', medium: '#0891B2', high: '#D97706', critical: '#B91C1C' };
 export const CHART_COLORS = ['#15803D', '#0891B2', '#38BDF8', '#14532D', '#65A30D', '#0E7490', '#86EFAC', '#164E63'];

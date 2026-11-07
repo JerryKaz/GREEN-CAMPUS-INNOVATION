@@ -51,7 +51,7 @@ export const emptyHTML = (title, body = '', iconName = 'info') =>
 export const errorHTML = (message) =>
   `<div class="state state--error" role="alert">${icon('alert', 24)}<p>${esc(message)}</p></div>`;
 
-export const demoBadge = (on = true) => (on ? '<span class="badge badge--demo" title="Sample record for demonstration, not measured campus data">Sample</span>' : '');
+export const demoBadge = (on = true) => (on ? '<span class="badge badge--demo" title="Demonstration record, not measured campus data">DEMO</span>' : '');
 
 /** Downscale + re-encode an image file to JPEG. Also strips EXIF/GPS metadata. */
 export async function compressImage(file, maxDim = 1600, quality = 0.8) {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>WaterWatch Admin, Green Campus Innovation</title>
+  <title>Admin sign in · VVU WaterWatch</title>
   <meta name="robots" content="noindex, nofollow">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="theme-color" content="#14532D">
@@ -13,79 +13,34 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/main.css">
   <link rel="stylesheet" href="../assets/css/admin.css">
-  <script type="module" src="../assets/js/admin/app.js"></script>
+  <script type="module" src="../assets/js/admin/login.js"></script>
 </head>
-<body class="admin" data-page="admin">
-  <a class="skip-link" href="#admin-main">Skip to content</a>
-
-  <!-- Shown until the session check finishes -->
-  <div id="boot" class="boot"><span class="spinner" aria-hidden="true"></span><span>Checking your session…</span></div>
-
-  <!-- Sign-in -->
-  <main id="login-view" class="login" hidden>
+<body class="admin" data-page="admin-login">
+  <main class="login">
     <div class="login__card">
       <a class="brand" href="../index.html">
         <svg class="logo-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path d="M20 3S7 17.5 7 26a13 13 0 0 0 26 0C33 17.5 20 3 20 3Z" fill="#0891B2"/><path d="M13.5 30c0-7.5 5.2-11.6 13-12.5-.9 7.6-5.4 12.5-13 12.5Z" fill="#DCFCE7"/><path d="M13.5 30 21 22.5" stroke="#15803D" stroke-width="1.8" stroke-linecap="round"/></svg>
         <span class="brand__text">GREEN CAMPUS<span>INNOVATION</span></span>
       </a>
-      <h1>WaterWatch administration</h1>
-      <p class="muted">Restricted to the project team, Estates and Facilities, and authorised SRC officers.</p>
-      <div id="login-demo" hidden></div>
+      <h1>WaterWatch admin</h1>
+      <p class="muted">For the Group 5 project team. Enter the admin password to continue.</p>
+      <div id="login-reason"></div>
       <form id="login-form" class="form" novalidate>
         <div class="field">
-          <label for="login-email">Email</label>
-          <input id="login-email" name="email" type="email" autocomplete="username" required>
-          <span class="field-error" data-error-for="email"></span>
-        </div>
-        <div class="field">
           <label for="login-password">Password</label>
-          <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+          <div class="password-field">
+            <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+            <button type="button" class="icon-btn" id="toggle-password" aria-controls="login-password" aria-pressed="false" aria-label="Show password"><i data-icon="eye" data-size="18"></i></button>
+          </div>
           <span class="field-error" data-error-for="password"></span>
         </div>
         <p class="form-status" data-form-status aria-live="polite"></p>
-        <button class="btn btn--block" type="submit">Sign in</button>
-        <button class="btn btn--ghost btn--block btn--sm" type="button" id="forgot">Forgot password?</button>
+        <button class="btn btn--block" type="submit"><i data-icon="shield" data-size="18"></i>Sign in</button>
       </form>
+      <div class="notice" style="margin-top:20px"><i data-icon="info" data-size="18"></i>
+        <p class="small" style="margin:0"><strong>Demonstration access gate only.</strong> This site has no server, so the password check runs in the browser and does not protect data. Never store sensitive information here.</p></div>
       <p class="small muted" style="margin-top:20px"><a href="../index.html">← Back to the public website</a></p>
     </div>
   </main>
-
-  <!-- No role assigned -->
-  <main id="norole-view" class="login" hidden>
-    <div class="login__card">
-      <h1>Access pending</h1>
-      <p>You are signed in as <strong id="norole-email"></strong>, but this account has not been given a WaterWatch role yet.</p>
-      <p class="muted">Ask a WaterWatch administrator to assign you the Admin, Staff or Viewer role.</p>
-      <button class="btn btn--ghost" type="button" data-signout>Sign out</button>
-    </div>
-  </main>
-
-  <!-- App shell -->
-  <div id="app-view" class="shell" hidden>
-    <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
-      <div class="sidebar__brand">
-        <a class="brand" href="#/overview">
-          <svg class="logo-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path d="M20 3S7 17.5 7 26a13 13 0 0 0 26 0C33 17.5 20 3 20 3Z" fill="#0891B2"/><path d="M13.5 30c0-7.5 5.2-11.6 13-12.5-.9 7.6-5.4 12.5-13 12.5Z" fill="#DCFCE7"/><path d="M13.5 30 21 22.5" stroke="#15803D" stroke-width="1.8" stroke-linecap="round"/></svg>
-          <span class="brand__text">WATERWATCH<span>ADMIN</span></span>
-        </a>
-      </div>
-      <nav class="sidenav" id="sidenav"></nav>
-      <div class="sidebar__foot">
-        <a href="../index.html" target="_blank" rel="noopener"><i data-icon="external" data-size="16"></i>View public site</a>
-      </div>
-    </aside>
-    <div class="workspace">
-      <header class="topbar">
-        <button class="icon-btn sidebar-toggle" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="Open navigation"><i data-icon="menu"></i></button>
-        <h1 class="topbar__title" id="view-title">Overview</h1>
-        <div class="topbar__user">
-          <span class="user-chip"><span id="user-name"></span><span class="badge" id="user-role"></span></span>
-          <button class="btn btn--ghost btn--sm" type="button" data-signout><i data-icon="logout" data-size="16"></i><span class="hide-sm">Sign out</span></button>
-        </div>
-      </header>
-      <div id="admin-demo-ribbon"></div>
-      <main id="admin-main" class="view" tabindex="-1"></main>
-    </div>
-  </div>
 </body>
 </html>

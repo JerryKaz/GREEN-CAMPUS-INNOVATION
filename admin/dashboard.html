@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WaterWatch Admin · Green Campus Innovation</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="theme-color" content="#14532D">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+  <script type="module" src="../assets/js/admin/app.js"></script>
+</head>
+<body class="admin" data-page="admin">
+  <a class="skip-link" href="#admin-main">Skip to content</a>
+  <div id="boot" class="boot"><span class="spinner" aria-hidden="true"></span><span>Opening the admin panel…</span></div>
+
+  <div id="app-view" class="shell" hidden>
+    <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
+      <div class="sidebar__brand">
+        <a class="brand" href="#/overview">
+          <svg class="logo-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path d="M20 3S7 17.5 7 26a13 13 0 0 0 26 0C33 17.5 20 3 20 3Z" fill="#0891B2"/><path d="M13.5 30c0-7.5 5.2-11.6 13-12.5-.9 7.6-5.4 12.5-13 12.5Z" fill="#DCFCE7"/><path d="M13.5 30 21 22.5" stroke="#15803D" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span class="brand__text">WATERWATCH<span>ADMIN</span></span>
+        </a>
+      </div>
+      <nav class="sidenav" id="sidenav"></nav>
+      <div class="sidebar__foot">
+        <a href="../dashboard.html" target="_blank" rel="noopener"><i data-icon="external" data-size="16"></i>Public dashboard</a>
+        <a href="../index.html" target="_blank" rel="noopener"><i data-icon="external" data-size="16"></i>Public website</a>
+      </div>
+    </aside>
+    <div class="workspace">
+      <header class="topbar">
+        <button class="icon-btn sidebar-toggle" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="Open navigation"><i data-icon="menu"></i></button>
+        <h1 class="topbar__title" id="view-title">Overview</h1>
+        <div class="topbar__user">
+          <span class="user-chip"><span>Project admin</span><span class="badge" id="storage-badge">Local data</span></span>
+          <button class="btn btn--ghost btn--sm" type="button" data-signout><i data-icon="logout" data-size="16"></i><span class="hide-sm">Log out</span></button>
+        </div>
+      </header>
+      <div id="admin-ribbon"></div>
+      <main id="admin-main" class="view" tabindex="-1"></main>
+    </div>
+  </div>
+</body>
+</html>

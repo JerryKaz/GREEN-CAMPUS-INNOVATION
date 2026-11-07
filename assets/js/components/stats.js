@@ -5,8 +5,7 @@ import { estimatedDailySaving } from '../lib/calc.js';
 import { includeDemo } from '../data/db.js';
 import { countUp } from '../layout.js';
 
-export async function loadPublicData(db) {
-  const demo = includeDemo();
+export async function loadPublicData(db, { demo = includeDemo() } = {}) {
   const [stats, readings, locations] = await Promise.all([
     db.publicStats(demo),
     db.list('water_readings', { includeDemo: demo }),
@@ -21,7 +20,7 @@ const card = (iconName, title, value, note, unit = '') => `<div class="stat">
     : `<span class="stat__value"><span data-count="${value}">${value}</span>${unit ? `<small>${esc(unit)}</small>` : ''}</span>`}
   ${note ? `<span class="stat__note">${esc(note)}</span>` : ''}</div>`;
 
-export const SAMPLE_CHIP = '<span class="sample-chip" title="Figures use sample records for demonstration, not measured campus data">Sample data</span>';
+export const SAMPLE_CHIP = '<span class="sample-chip" title="These figures include demonstration records, not measured campus data">DEMO DATA: includes demonstration records, not research findings</span>';
 
 export function renderImpactStats(host, noticeHost, { stats, readings, locations }) {
   const saved = estimatedDailySaving(readings, locations);

@@ -23,7 +23,7 @@ export async function render({ db, el, navigate }) {
   const demoCount = [reports, readings, actions, pledges, feedback].reduce((s, a) => s + a.filter((r) => r.is_demo).length, 0);
 
   el.innerHTML = `
-    ${demoCount ? `<div class="notice notice--demo">${icon('info', 18)}<p><strong>${demoCount} demonstration records</strong> are in the database. Delete them in <a href="#/settings">Settings</a> before publishing real research.</p></div>` : ''}
+    ${demoCount ? `<div class="notice notice--demo">${icon('info', 18)}<p><strong>${demoCount} demonstration records</strong> are stored on this device and labelled DEMO. Clear them in <a href="#/data">Data Management</a> before presenting real research.</p></div>` : ''}
     <div class="kpis">
       ${kpi('clipboard', 'Total water reports', reports.length, '', 'reports')}
       ${kpi('alert', 'Pending reports', n(reports, PENDING), 'Submitted or under review', 'reports')}

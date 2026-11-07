@@ -51,10 +51,25 @@
     <div class="waterline" style="--wave:#fff"></div>
   </section>
 
-  <section class="section section--white" aria-labelledby="roadmap-title">
+  <section class="section section--white" aria-labelledby="how-title">
+    <div class="container">
+      <div class="section-head section-head--split">
+        <h2 id="how-title">How the intervention works</h2>
+        <p class="lead">WaterWatch does not add new plumbing. It changes the process: problems are reported, assigned, fixed, checked and measured.</p>
+      </div>
+      <ol class="flow">
+        <li class="reveal"><span class="flow__dot"><i data-icon="gauge" data-size="20"></i></span><h3>1. Measure the baseline</h3><p>Daily readings at each pilot location for at least three days, same method and unit throughout.</p></li>
+        <li class="reveal"><span class="flow__dot"><i data-icon="megaphone" data-size="20"></i></span><h3>2. Launch reporting</h3><p>Introduce the report form and signage at the pilot locations; brief Estates/Facilities and the SRC.</p></li>
+        <li class="reveal"><span class="flow__dot"><i data-icon="wrench" data-size="20"></i></span><h3>3. Act on reports</h3><p>Each report gets a status, an owner and, where needed, a recorded conservation action with cost.</p></li>
+        <li class="reveal"><span class="flow__dot"><i data-icon="chart" data-size="20"></i></span><h3>4. Measure again</h3><p>Pilot readings at the same locations with the same method, compared like for like with the baseline.</p></li>
+        <li class="reveal"><span class="flow__dot"><i data-icon="refresh" data-size="20"></i></span><h3>5. Review and improve</h3><p>Use feedback and results to refine the process before recommending wider adoption.</p></li>
+      </ol>
+    </div>
+  </section>
+  <section class="section section--mist" aria-labelledby="roadmap-title">
     <div class="container split">
       <div>
-        <h2 id="roadmap-title">Six phases from research to adoption</h2>
+        <h2 id="roadmap-title">Implementation timeline: six phases</h2>
         <p class="lead">Each phase produces evidence the next one depends on. We only scale what the pilot shows actually works.</p>
         <div class="frame frame--wide reveal" data-media="impl-team" style="margin-top:28px"></div>
       </div>
@@ -69,6 +84,19 @@
     </div>
   </section>
 
+  <section class="section section--white" id="results" aria-labelledby="results-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="results-title">Baseline and pilot measurements</h2>
+        <p class="lead">Average daily litres for the same location and measurement method in each phase. Savings are shown only where both phases have been measured.</p>
+      </div>
+      <div id="results-notice"></div>
+      <div class="table-wrap" id="results-table"></div>
+      <h3 style="margin-top:48px">Before and after</h3>
+      <p class="muted">Drag the slider to compare photos taken at the same spot before and after the intervention.</p>
+      <div id="before-after"></div>
+    </div>
+  </section>
   <section class="section section--leaf" id="budget" aria-labelledby="budget-title">
     <div class="container">
       <div class="section-head">
@@ -89,7 +117,7 @@
           <li>Water saved equals baseline minus pilot</li>
           <li>Percentage reduction equals water saved divided by baseline, times 100 (not calculated when baseline is zero)</li>
           <li>Financial savings equal water saved times a <strong>verified</strong> tariff</li>
-          <li>Annual projection only for periods of 7 days or more</li>
+          <li>Annual projection only for periods of 7 days or more, and only as an estimate</li>
         </ul>
         <div class="notice"><i data-icon="info" data-size="18"></i><p>All results are <strong>estimates</strong>, not guaranteed savings.</p></div>
         <div style="margin-top:16px"><button class="btn btn--ghost btn--sm" type="button" id="use-recorded" hidden><i data-icon="gauge" data-size="16"></i>Fill from recorded readings</button></div>
@@ -143,6 +171,15 @@
       </div>
     </div>
   </section>
+  <section class="section section--forest" aria-labelledby="impl-video-title">
+    <div class="container split">
+      <div>
+        <h2 id="impl-video-title">See the solution in action</h2>
+        <p class="lead">Video 2, our solution demonstration: VVU WaterWatch and the pilot intervention, start to finish.</p>
+      </div>
+      <div><div id="impl-video"></div><p class="small" data-video-caption style="color:#DCFCE7;margin-top:10px"></p></div>
+    </div>
+  </section>
 </main>
 
 <!-- @footer:start -->
@@ -161,7 +198,7 @@
           <svg class="logo-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path d="M20 3S7 17.5 7 26a13 13 0 0 0 26 0C33 17.5 20 3 20 3Z" fill="#0891B2"/><path d="M13.5 30c0-7.5 5.2-11.6 13-12.5-.9 7.6-5.4 12.5-13 12.5Z" fill="#DCFCE7"/><path d="M13.5 30 21 22.5" stroke="#15803D" stroke-width="1.8" stroke-linecap="round"/></svg>
           <span class="brand__text">GREEN CAMPUS<span>INNOVATION</span></span>
         </a>
-        <p>A water conservation initiative for Valley View University, Ghana, working with Estates and Facilities and the Students' Representative Council.</p>
+        <p>Green Campus Process Innovation by Group 5, Valley View University, Ghana. Focus area: water conservation.</p>
       </div>
       <div>
         <h4>Explore</h4>
@@ -178,13 +215,13 @@
           <li><a href="solution.html#report">Report a problem</a></li>
           <li><a href="feedback.html#pledge">Take the pledge</a></li>
           <li><a href="feedback.html#feedback">Send feedback</a></li>
-          <li><a href="admin/">Team sign in</a></li>
+          <li><a href="feedback.html#contact-title">Contact the team</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-base">
       <span>&copy; <span data-year></span> Green Campus Innovation. WaterWatch is a proposed campus prototype, not an official university system.</span>
-      <span>Personal data is handled in line with Ghana's Data Protection Act, 2012 (Act 843).</span>
+      <span>Submissions are saved only in the browser of the device used. Personal data is handled in line with Ghana's Data Protection Act, 2012 (Act 843).</span>
     </div>
   </div>
 </footer>

@@ -2,6 +2,7 @@
 import { hydrateIcons } from './lib/icons.js';
 import { hydrateMedia } from './lib/media.js';
 import { getDB, CONFIG } from './data/db.js';
+import { enableOffline } from './lib/offline.js';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -44,6 +45,7 @@ export async function initLayout() {
   document.querySelectorAll('[data-year]').forEach((el) => (el.textContent = new Date().getFullYear()));
 
   observeReveals();
+  enableOffline();
   const db = await getDB();
   return { db, config: CONFIG };
 }

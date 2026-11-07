@@ -30,31 +30,34 @@ export async function createMap(el, { center, zoom = 16, scrollZoom = false }) {
 const SEV_RANK = { low: 1, medium: 2, high: 3, critical: 4 };
 
 /**
- * Plot hotspots: one marker per location, sized/coloured by the worst open issue.
- * rows: output of publicHotspots().
+ * Plot campus locations as hotspot markers.
+ * rows: output of db.publicHotspots(): locations with coordinates, each with its reports.
+ * Colour = worst OPEN issue; green = all issues resolved; grey = no reports linked.
  */
 export async function plotHotspots(el, rows, { center, zoom }) {
   const { map, L: Lf } = await createMap(el, { center, zoom });
-  const byLoc = new Map();
-  for (const r of rows) {
-    const g = byLoc.get(r.location_id) ?? { ...r, issues: [] };
-    g.issues.push(r);
-    byLoc.set(r.location_id, g);
-  }
   const bounds = [];
-  for (const g of byLoc.values()) {
-    const open = g.issues.filter((i) => !['resolved', 'closed'].includes(i.status));
-    const worst = (open.length ? open : g.issues).reduce((a, b) => (SEV_RANK[b.severity] > SEV_RANK[a.severity] ? b : a));
-    const color = open.length ? SEVERITY_COLORS[worst.severity] : '#15803D';
+  for (const g of rows) {
+    const open = g.reports.filter((i) => !['resolved', 'closed'].includes(i.status));
+    const worst = open.reduce((a, b) => (!a || SEV_RANK[b.severity] > SEV_RANK[a.severity] ? b : a), null);
+    const color = worst ? SEVERITY_COLORS[worst.severity] : g.reports.length ? '#15803D' : '#94A3B8';
     const marker = Lf.circleMarker([g.latitude, g.longitude], {
-      radius: 8 + Math.min(10, g.issues.length * 1.5), color: '#fff', weight: 2, fillColor: color, fillOpacity: 0.9,
+      radius: 8 + Math.min(10, g.reports.length * 1.5), color: '#fff', weight: 2, fillColor: color, fillOpacity: 0.9,
+      dashArray: g.is_verified ? null : '3 3',
     }).addTo(map);
-    const list = g.issues.slice(0, 6).map((i) =>
-      `<li>${esc(label(ISSUE_TYPES, i.issue_type))} · <strong>${esc(label(SEVERITIES, i.severity))}</strong> · ${esc(label(REPORT_STATUSES, i.status))} · ${esc(fmtDate(i.submitted_at))}</li>`).join('');
-    marker.bindPopup(`<h4>${esc(g.location_name)}</h4>
-      ${g.location_demo ? '<span class="badge badge--demo">Demo location</span> ' : ''}${g.location_verified ? '<span class="badge badge--verified">Verified location</span>' : ''}
-      <p style="margin:6px 0">${g.issues.length} report(s), ${open.length} open</p><ul style="padding-left:16px;margin:0">${list}</ul>
-      ${g.issues.length > 6 ? `<p style="margin:4px 0 0">+${g.issues.length - 6} more</p>` : ''}`);
+    const byType = {};
+    g.reports.forEach((r) => { byType[r.issue_type] = (byType[r.issue_type] ?? 0) + 1; });
+    const status = !g.reports.length ? 'No reports linked' : open.length ? `${open.length} open of ${g.reports.length}` : 'All reported issues resolved';
+    const recent = [...g.reports].sort((a, b) => String(b.submitted_at).localeCompare(String(a.submitted_at))).slice(0, 5);
+    marker.bindPopup(`<h4 style="margin:0 0 4px">${esc(g.name)}</h4>
+      ${g.is_demo ? '<span class="badge badge--demo">DEMO: sample marker, not a real hotspot</span> ' : ''}
+      ${g.is_verified ? '<span class="badge badge--verified">Verified location</span>' : '<span class="badge">Location not yet verified</span>'}
+      ${g.description ? `<p style="margin:6px 0">${esc(g.description)}</p>` : ''}
+      <p style="margin:6px 0"><strong>Status:</strong> ${esc(status)}</p>
+      ${Object.keys(byType).length ? `<p style="margin:6px 0"><strong>Problem categories:</strong> ${Object.entries(byType).map(([k, n]) => `${esc(label(ISSUE_TYPES, k))} (${n})`).join(', ')}</p>` : ''}
+      ${recent.length ? `<strong>Related reports</strong><ul style="padding-left:16px;margin:4px 0 0">${recent.map((i) =>
+        `<li>${esc(label(ISSUE_TYPES, i.issue_type))} · ${esc(label(SEVERITIES, i.severity))} · ${esc(label(REPORT_STATUSES, i.status))} · ${esc(fmtDate(i.submitted_at))}${i.is_demo ? ' (DEMO)' : ''}</li>`).join('')}</ul>` : ''}
+      ${g.reports.length > 5 ? `<p style="margin:4px 0 0">+${g.reports.length - 5} more</p>` : ''}`, { maxWidth: 320 });
     bounds.push([g.latitude, g.longitude]);
   }
   if (bounds.length > 1) map.fitBounds(bounds, { padding: [40, 40], maxZoom: 18 });
@@ -68,4 +71,5 @@ export const MAP_LEGEND = `<div class="map-legend">
   <span><i class="dot" style="background:${SEVERITY_COLORS.high}"></i>High</span>
   <span><i class="dot" style="background:${SEVERITY_COLORS.critical}"></i>Critical</span>
   <span><i class="dot" style="background:#15803D"></i>All issues resolved</span>
-  <span>Marker size = number of reports</span></div>`;
+  <span><i class="dot" style="background:#94A3B8"></i>No reports linked</span>
+  <span>Dashed outline = location not yet verified · Marker size = number of reports</span></div>`;

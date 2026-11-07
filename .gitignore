@@ -12,18 +12,19 @@ yarn-error.log*
 pnpm-debug.log*
 
 # Build and deploy output
+_site/
 dist/
 build/
 .netlify/
 .vercel/
 .wrangler/
 
-# Supabase CLI local state
-supabase/.branches/
-supabase/.temp/
-
-# Large media: keep originals out of Git; commit web-ready versions only
-assets/media/originals/
+# Large media: keep originals out of Git; commit web-ready photos only.
+# Videos belong on YouTube or Google Drive, never in the repository.
+public/images/**/originals/
+public/videos/**/*.*
+!public/videos/**/.gitkeep
+*.mp4
 *.mov
 *.MOV
 *.avi

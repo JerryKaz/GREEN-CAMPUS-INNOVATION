@@ -1,7 +1,7 @@
 // =============================================================================
 // DEMONSTRATION DATA — single source of truth.
-// Used by (1) the in-browser demo mode and (2) scripts/generate-seed.mjs,
-// which turns it into supabase/seed.sql.
+// scripts/generate-sample-data.mjs turns this into public/data/sample-data.json,
+// which the site loads into IndexedDB the first time it opens on a device.
 //
 // EVERY record here is fictional and flagged is_demo = true. Location names
 // are labelled "DEMO" and coordinates are offsets around the configured map
@@ -21,12 +21,12 @@ export function buildDemoData(center = [5.6037, -0.187]) {
   const r6 = (v) => Math.round(v * 1e6) / 1e6;
 
   const locSpecs = [
-    ['Hostel Block A washrooms (sample)', 'hostel'],
-    ['Academic Block B ground floor (sample)', 'academic'],
-    ['Dining hall kitchen (sample)', 'kitchen'],
-    ['Overhead tank T1 (sample)', 'tank'],
-    ['Sports field standpipe (sample)', 'outdoor'],
-    ['Administration washrooms (sample)', 'office'],
+    ['Hostel Block A washrooms (DEMO)', 'hostel'],
+    ['Academic Block B ground floor (DEMO)', 'academic'],
+    ['Dining hall kitchen (DEMO)', 'kitchen'],
+    ['Overhead tank T1 (DEMO)', 'tank'],
+    ['Sports field standpipe (DEMO)', 'outdoor'],
+    ['Administration washrooms (DEMO)', 'office'],
   ];
 
   const campus_locations = locSpecs.map(([name, type], i) => ({
@@ -129,7 +129,9 @@ export function buildDemoData(center = [5.6037, -0.187]) {
     estimated_cost: est,
     actual_cost: act,
     status,
-    verification_notes: status === 'verified' ? 'Checked by facilities officer.' : '',
+    completion_date: ['completed', 'verified'].includes(status) ? `2026-10-${String(14 + i * 2).padStart(2, '0')}` : null,
+    verification_notes: status === 'verified' ? 'Checked by facilities officer (sample).' : '',
+    outcome: ['completed', 'verified'].includes(status) ? 'Sample outcome: no visible leak at follow-up check.' : '',
     is_demo: true,
     created_at: `2026-10-${String(10 + i).padStart(2, '0')}T12:00:00Z`,
   }));
@@ -171,21 +173,8 @@ export function buildDemoData(center = [5.6037, -0.187]) {
   }));
 
   return {
-    profiles: [],
     campus_locations, water_reports, water_readings, conservation_actions,
     pledges, feedback, budget_items,
-    gallery_photos: [],
-    site_settings: DEFAULT_SETTINGS.map((s) => ({ ...s, value: structuredClone(s.value) })),
   };
 }
 
-// Settings the group edits from the admin area. All empty until real data exists.
-export const DEFAULT_SETTINGS = [
-  { key: 'videos', value: { problem_url: '', solution_url: '' } },
-  { key: 'research_findings', value: {
-      challenges: '', processes: '', causes: '', experiences: '', opportunities: '' } },
-  { key: 'pilot', value: {
-      location: '', testing_date: '', users: null, feedback: '', problems: '', improvements: '' } },
-  { key: 'tariff', value: { value: null, unit: 'm3', source: '', verified: false } },
-  { key: 'roadmap', value: { current_phase: 1 } },
-];

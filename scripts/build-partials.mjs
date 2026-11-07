@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Copies partials/header.html and partials/footer.html into every public page
+// Copies docs/partials/header.html and docs/partials/footer.html into every public page
 // between the <!-- @header --> / <!-- @footer --> markers. Idempotent.
 //   npm run partials
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
@@ -8,8 +8,8 @@ import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const parts = {
-  header: readFileSync(join(root, 'partials/header.html'), 'utf8').trim(),
-  footer: readFileSync(join(root, 'partials/footer.html'), 'utf8').trim(),
+  header: readFileSync(join(root, 'docs/partials/header.html'), 'utf8').trim(),
+  footer: readFileSync(join(root, 'docs/partials/footer.html'), 'utf8').trim(),
 };
 for (const file of readdirSync(root).filter((f) => f.endsWith('.html'))) {
   const path = join(root, file);

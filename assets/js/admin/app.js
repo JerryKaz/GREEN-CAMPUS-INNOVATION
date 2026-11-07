@@ -1,172 +1,133 @@
-// WaterWatch admin: session gate, role-based navigation and hash router.
-// The UI hides what a role cannot do; the database (RLS) is what actually enforces it.
-import { getDB } from '../data/db.js';
-import { hydrateIcons, icon } from '../lib/icons.js';
-import { esc, toast, loadingHTML, errorHTML } from '../lib/dom.js';
-import { bindForm, rules, friendlyError } from '../lib/validate.js';
-import { ROLES, label } from '../lib/labels.js';
+// WaterWatch admin: session guard, sidebar navigation and hash router.
+// Unauthenticated visitors are redirected to the login page (admin/index.html).
+import { isAuthenticated, logout, touch, IDLE_MINUTES } from './auth.js';
+
+if (!isAuthenticated()) {
+  const next = location.hash && /^#\/[a-z-]+/.test(location.hash) ? `&next=${encodeURIComponent(location.hash.split('?')[0])}` : '';
+  location.replace(`./index.html?reason=required${next}`);
+  await new Promise(() => {}); // halt this module while the browser navigates away
+}
+
+const { getDB } = await import('../data/db.js');
+const { hydrateIcons, icon } = await import('../lib/icons.js');
+const { esc, toast, loadingHTML, errorHTML, fmtDateTime } = await import('../lib/dom.js');
+const { friendlyError } = await import('../lib/validate.js');
+(await import('../lib/offline.js')).enableOffline();
 
 const ROUTES = [
   { group: 'Operations' },
-  { path: 'overview', title: 'Overview', icon: 'dashboard', mod: 'overview' },
+  { path: 'overview', title: 'Dashboard', icon: 'dashboard', mod: 'overview' },
   { path: 'reports', title: 'Water Reports', icon: 'alert', mod: 'reports', count: 'reports' },
-  { path: 'locations', title: 'Campus Locations', icon: 'pin', mod: 'locations' },
   { path: 'readings', title: 'Water Readings', icon: 'gauge', mod: 'readings' },
   { path: 'actions', title: 'Conservation Actions', icon: 'wrench', mod: 'actions' },
+  { path: 'locations', title: 'Campus Locations', icon: 'pin', mod: 'locations' },
   { group: 'Community' },
   { path: 'pledges', title: 'Pledges', icon: 'heart', mod: 'pledges' },
   { path: 'feedback', title: 'Feedback', icon: 'message', mod: 'feedback', count: 'feedback' },
-  { group: 'Insight & content' },
+  { group: 'Content & insight' },
+  { path: 'media', title: 'Media Management', icon: 'image', mod: 'media' },
   { path: 'analytics', title: 'Reports & Analytics', icon: 'chart', mod: 'analytics' },
-  { path: 'gallery', title: 'Photo Gallery', icon: 'image', mod: 'gallery' },
   { path: 'budget', title: 'Budget', icon: 'coins', mod: 'budget' },
-  { path: 'settings', title: 'Settings', icon: 'settings', mod: 'settings' },
+  { path: 'settings', title: 'Site Content', icon: 'settings', mod: 'settings' },
+  { group: 'System' },
+  { path: 'data', title: 'Data Management', icon: 'database', mod: 'data' },
 ];
-const IDLE_MINUTES = 30;
 
 const $ = (id) => document.getElementById(id);
-const show = (id) => ['boot', 'login-view', 'norole-view', 'app-view'].forEach((v) => ($(v).hidden = v !== id));
+const signOut = (reason = 'loggedout') => { logout(); location.replace(`./index.html?reason=${reason}`); };
 
 hydrateIcons();
 const db = await getDB();
-let profile = null;
+document.addEventListener('click', (e) => { if (e.target.closest('[data-signout]')) signOut(); });
 
-document.addEventListener('click', async (e) => {
-  if (!e.target.closest('[data-signout]')) return;
-  await db.signOut();
-  location.hash = '';
-  location.reload();
+// Every admin view has full rights: there is a single shared demo password, not user accounts.
+const can = { write: true, admin: true };
+const profile = { id: 'local-admin', full_name: 'Project admin' };
+
+$('boot').hidden = true;
+$('app-view').hidden = false;
+$('storage-badge').textContent = db.persistent ? 'Local data' : 'Temporary data';
+
+async function drawRibbon() {
+  const last = await db.getMeta('last_backup_at');
+  const stale = !last || Date.now() - new Date(last).getTime() > 7 * 86_400_000;
+  $('admin-ribbon').innerHTML = `<div class="demo-ribbon">${icon('database', 16)}
+    <span>${db.persistent
+      ? 'Records are stored in this browser on this device only. They are not shared with other visitors or devices.'
+      : 'This browser is not allowing local storage, so changes will be lost when the tab closes.'}
+    ${stale ? `<strong>${last ? `Last backup ${esc(fmtDateTime(last))}.` : 'No backup yet.'}</strong>` : ''}
+    <a href="#/data">Back up or restore</a></span></div>`;
+}
+
+const nav = $('sidenav');
+nav.innerHTML = ROUTES.map((r) => (r.group ? `<span class="group">${esc(r.group)}</span>`
+  : `<a href="#/${r.path}" data-path="${r.path}">${icon(r.icon, 18)}<span>${esc(r.title)}</span>${r.count ? `<span class="count" data-count="${r.count}" hidden></span>` : ''}</a>`)).join('')
+  + `<button type="button" class="sidenav__logout" data-signout>${icon('logout', 18)}<span>Log out</span></button>`;
+
+const sidebar = $('sidebar');
+const toggle = document.querySelector('.sidebar-toggle');
+const setOpen = (open) => { sidebar.classList.toggle('is-open', open); toggle.setAttribute('aria-expanded', String(open)); };
+toggle.addEventListener('click', () => setOpen(!sidebar.classList.contains('is-open')));
+nav.addEventListener('click', (e) => { if (e.target.closest('a')) setOpen(false); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+document.addEventListener('click', (e) => {
+  if (sidebar.classList.contains('is-open') && !sidebar.contains(e.target) && !toggle.contains(e.target)) setOpen(false);
 });
-
-async function boot() {
-  try {
-    profile = (await db.session()) ? await db.profile() : null;
-  } catch (err) {
-    console.error(err);
-    profile = null;
-  }
-  if (!profile) return showLogin();
-  if (!profile.role) {
-    $('norole-email').textContent = profile.email ?? '';
-    return show('norole-view');
-  }
-  startApp();
-}
-
-// ---- sign-in -----------------------------------------------------------------
-async function showLogin() {
-  show('login-view');
-  if (db.mode === 'demo') {
-    const { DEMO_CREDENTIALS } = await import('../data/local-adapter.js');
-    const box = $('login-demo');
-    box.hidden = false;
-    box.innerHTML = `<div class="notice notice--demo" style="margin-bottom:16px">${icon('info', 18)}<p><strong>Demo mode.</strong> No Supabase project is configured, so this is a browser-only demonstration.<br>
-      Email <code>${esc(DEMO_CREDENTIALS.email)}</code> · Password <code>${esc(DEMO_CREDENTIALS.password)}</code></p></div>`;
-  }
-  const form = $('login-form');
-  bindForm(form, { email: [rules.required('Enter your email.'), rules.email()], password: [rules.required('Enter your password.')] },
-    async (v) => {
-      await db.signIn(v.email.trim(), v.password);
-      form.reset();
-      await boot();
-    }, { minFillMs: 0 });
-  $('forgot').addEventListener('click', async () => {
-    const email = form.elements.email.value.trim();
-    const status = form.querySelector('[data-form-status]');
-    if (!email) { status.className = 'form-status form-status--error'; status.textContent = 'Enter your email above first.'; return; }
-    try {
-      await db.resetPassword(email);
-      status.className = 'form-status form-status--success';
-      status.textContent = 'If that account exists, a reset link has been sent.';
-    } catch (err) {
-      status.className = 'form-status form-status--error';
-      status.textContent = friendlyError(err);
-    }
-  });
-  form.elements.email.focus();
-}
-
-// ---- app shell -----------------------------------------------------------------
-function startApp() {
-  show('app-view');
-  const role = profile.role;
-  const can = { write: role === 'admin' || role === 'staff', admin: role === 'admin' };
-  $('user-name').textContent = profile.full_name || profile.email || 'Signed in';
-  $('user-role').textContent = label(ROLES, role);
-  if (db.mode === 'demo') {
-    $('admin-demo-ribbon').innerHTML = '<div class="demo-ribbon">Demo mode. Data is stored only in this browser. Configure Supabase for real, shared, secured data.</div>';
-  }
-
-  const nav = $('sidenav');
-  nav.innerHTML = ROUTES.map((r) => (r.group ? `<span class="group">${esc(r.group)}</span>`
-    : `<a href="#/${r.path}" data-path="${r.path}">${icon(r.icon, 18)}<span>${esc(r.title)}</span>${r.count ? `<span class="count" data-count="${r.count}" hidden></span>` : ''}</a>`)).join('');
-
-  const sidebar = $('sidebar');
-  const toggle = document.querySelector('.sidebar-toggle');
-  const setOpen = (open) => { sidebar.classList.toggle('is-open', open); toggle.setAttribute('aria-expanded', String(open)); };
-  toggle.addEventListener('click', () => setOpen(!sidebar.classList.contains('is-open')));
-  nav.addEventListener('click', (e) => { if (e.target.closest('a')) setOpen(false); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
-  document.addEventListener('click', (e) => {
-    if (sidebar.classList.contains('is-open') && !sidebar.contains(e.target) && !toggle.contains(e.target)) setOpen(false);
-  });
-
-  const ctx = { db, profile, can, refreshCounts, navigate: (p) => (location.hash = `#/${p}`) };
-  let renderSeq = 0;
-  async function route() {
-    const path = location.hash.replace(/^#\/?/, '').split('?')[0] || 'overview';
-    const r = ROUTES.find((x) => x.path === path) ?? ROUTES[1];
-    nav.querySelectorAll('a').forEach((a) => (a.dataset.path === r.path ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
-    $('view-title').textContent = r.title;
-    document.title = `${r.title} · WaterWatch Admin`;
-    const el = $('admin-main');
-    el.innerHTML = loadingHTML();
-    const seq = ++renderSeq;
-    try {
-      const mod = await import(`./views/${r.mod}.js`);
-      if (seq !== renderSeq) return; // user navigated away meanwhile
-      const host = document.createElement('div');
-      host.className = 'view-inner';
-      host.innerHTML = loadingHTML();
-      el.replaceChildren(host); // attached first: charts and maps need real dimensions
-      el.focus({ preventScroll: true });
-      await mod.render({ ...ctx, el: host, isCurrent: () => seq === renderSeq });
-    } catch (err) {
-      console.error(err);
-      if (seq === renderSeq) el.innerHTML = errorHTML(friendlyError(err));
-    }
-  }
-  window.addEventListener('hashchange', route);
-  route();
-  refreshCounts();
-  armIdleTimeout();
-}
 
 async function refreshCounts() {
   try {
     const [reports, feedback] = await Promise.all([
-      db.list('water_reports', { eq: { status: 'submitted' }, columns: 'id' }),
-      db.list('feedback', { eq: { status: 'new' }, columns: 'id' }),
+      db.list('water_reports', { eq: { status: 'submitted' } }),
+      db.list('feedback', { eq: { status: 'new' } }),
     ]);
     for (const [key, n] of [['reports', reports.length], ['feedback', feedback.length]]) {
       const el = document.querySelector(`[data-count="${key}"]`);
       if (el) { el.hidden = !n; el.textContent = n; el.title = key === 'reports' ? `${n} new report(s)` : `${n} unread`; }
     }
   } catch { /* counts are a convenience */ }
+  drawRibbon();
 }
 
-function armIdleTimeout() {
-  let timer;
-  const reset = () => {
-    clearTimeout(timer);
-    timer = setTimeout(async () => {
-      await db.signOut();
-      toast('Signed out after 30 minutes of inactivity.', 'info', 8000);
-      setTimeout(() => location.reload(), 1500);
-    }, IDLE_MINUTES * 60 * 1000);
-  };
-  ['pointerdown', 'keydown', 'scroll'].forEach((ev) => document.addEventListener(ev, reset, { passive: true }));
-  reset();
+const ctx = { db, profile, can, refreshCounts, navigate: (p) => { location.hash = `#/${p}`; } };
+let renderSeq = 0;
+async function route() {
+  const path = location.hash.replace(/^#\/?/, '').split('?')[0] || 'overview';
+  const r = ROUTES.find((x) => x.path === path) ?? ROUTES[1];
+  nav.querySelectorAll('a').forEach((a) => (a.dataset.path === r.path ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
+  $('view-title').textContent = r.title;
+  document.title = `${r.title} · WaterWatch Admin`;
+  const el = $('admin-main');
+  el.innerHTML = loadingHTML();
+  const seq = ++renderSeq;
+  try {
+    const mod = await import(`./views/${r.mod}.js`);
+    if (seq !== renderSeq) return;
+    const host = document.createElement('div');
+    host.className = 'view-inner';
+    host.innerHTML = loadingHTML();
+    el.replaceChildren(host); // attached first: charts and maps need real dimensions
+    el.focus({ preventScroll: true });
+    await mod.render({ ...ctx, el: host, isCurrent: () => seq === renderSeq });
+  } catch (err) {
+    console.error(err);
+    if (seq === renderSeq) el.innerHTML = errorHTML(friendlyError(err));
+  }
 }
+window.addEventListener('hashchange', route);
+db.onChange(() => refreshCounts());
+route();
+refreshCounts();
 
-boot();
+// Session upkeep: activity extends the idle timer; expiry returns to the login page.
+let idleTimer;
+const resetIdle = () => {
+  touch();
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => {
+    toast(`Signed out after ${IDLE_MINUTES} minutes of inactivity.`, 'info', 6000);
+    setTimeout(() => signOut('expired'), 1200);
+  }, IDLE_MINUTES * 60_000);
+};
+['pointerdown', 'keydown', 'scroll'].forEach((ev) => document.addEventListener(ev, resetIdle, { passive: true }));
+resetIdle();
+setInterval(() => { if (!isAuthenticated()) signOut('expired'); }, 60_000);

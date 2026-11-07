@@ -45,7 +45,7 @@
     <div class="hero__shade" aria-hidden="true"></div>
     <div class="container hero__inner">
       <p class="hero__kicker"><i data-icon="bulb" data-size="16"></i>Our solution</p>
-      <h1>Introducing WaterWatch: A Smarter Way to Conserve Water.</h1>
+      <h1>Introducing VVU WaterWatch: A Smarter Way to Conserve Water.</h1>
       <p class="hero__lead">A campus process that connects the people who notice water problems with the people who fix them, and measures what changes.</p>
       <div class="btn-row"><a class="btn btn--light btn--lg" href="#report"><i data-icon="alert" data-size="18"></i>Report water wastage</a><a class="btn btn--outline-light btn--lg" href="#video2-title"><i data-icon="play" data-size="18"></i>Watch the demo</a></div>
     </div>
@@ -74,12 +74,13 @@
     <div class="container split">
       <div>
         <h2 id="report-title">Report water wastage</h2>
-        <p class="lead">Seen a leaking tap, broken pipe or overflowing tank? Tell us where and what, it takes about a minute.</p>
+        <p class="lead">Seen water leaking, a broken pipe, an overflowing tank, a faulty tap or a toilet that keeps flushing? Tell us where and what. It takes about a minute.</p>
+        <div class="local-notice"><i data-icon="info" data-size="18"></i><p><strong>Prototype notice:</strong> reports are saved in this browser on this device only and are not sent to a central server or to Estates/Facilities. For anything urgent, contact Estates/Facilities directly.</p></div>
         <ul class="muted" style="padding-left:18px">
           <li>Anonymous by default. Add your name only if you want a follow-up.</li>
           <li>You'll get a reference number to quote when following up.</li>
           <li>Photos are optional and location metadata is stripped before upload.</li>
-          <li>Report descriptions are visible only to authorised administrators.</li>
+          <li>Report descriptions are not shown on the public pages.</li>
         </ul>
         <p class="small muted">For emergencies such as flooding or burst mains, also contact Estates and Facilities directly.</p>
         <div class="frame frame--tall reveal" data-media="solution-app" style="max-width:380px;margin-top:28px"></div>
@@ -142,6 +143,17 @@
     </div>
   </section>
 
+  <section class="section section--mist" aria-labelledby="solmap-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="solmap-title">Campus water hotspot map</h2>
+        <p class="lead">Every report is tied to a location, so repeated problems show up as hotspots that Estates/Facilities can prioritise.</p>
+      </div>
+      <div id="sol-map-notice"></div>
+      <div class="map" id="sol-map" role="region" aria-label="Map of campus water hotspots"></div>
+      <div id="sol-map-legend"></div>
+    </div>
+  </section>
   <section class="section section--white" aria-labelledby="triz-title">
     <div class="container">
       <div class="section-head">
@@ -192,7 +204,7 @@
         <h2 id="video2-title">WaterWatch in operation</h2>
         <p class="lead">A short walkthrough of reporting, the admin dashboard, water readings, issue tracking, conservation actions and impact reporting.</p>
       </div>
-      <div id="video-solution"></div>
+      <div><div id="video-solution"></div><p class="small" data-video-caption style="color:#DCFCE7;margin-top:10px"></p></div>
     </div>
   </section>
 
@@ -208,13 +220,13 @@
 
   <section class="section section--mist" aria-labelledby="tips-title">
     <div class="container">
-      <div class="section-head"><h2 id="tips-title">Practical water-saving tips</h2></div>
+      <div class="section-head"><h2 id="tips-title">Practical water conservation recommendations</h2></div>
       <div class="grid grid--3">
         <div class="card"><span class="icon-tile icon-tile--aqua"><i data-icon="droplet"></i></span><h3>Close taps fully</h3><p class="muted">Turn taps off while brushing or soaping, and check they stop completely when you leave.</p></div>
         <div class="card"><span class="icon-tile"><i data-icon="alert"></i></span><h3>Report, don't ignore</h3><p class="muted">A drip you report today is a repair Estates can plan, not a flood they have to react to.</p></div>
         <div class="card"><span class="icon-tile icon-tile--aqua"><i data-icon="refresh"></i></span><h3>Use only what you need</h3><p class="muted">Fill a bucket instead of running a hose; run washing only with full loads.</p></div>
         <div class="card"><span class="icon-tile"><i data-icon="users"></i></span><h3>Encourage others</h3><p class="muted">Remind roommates and colleagues, social norms change habits faster than signs.</p></div>
-        <div class="card"><span class="icon-tile icon-tile--aqua"><i data-icon="heart"></i></span><h3>Take the pledge</h3><p class="muted">Make one specific commitment and keep it. <a href="feedback.html#pledge">Pledge now</a></p></div>
+        <div class="card"><span class="icon-tile icon-tile--aqua"><i data-icon="heart"></i></span><h3>Take the online pledge</h3><p class="muted">Make one specific commitment and keep it. <a href="feedback.html#pledge">Pledge now</a></p></div>
         <div class="card"><span class="icon-tile"><i data-icon="message"></i></span><h3>Tell us what works</h3><p class="muted">Ideas from users are the best source of improvements. <a href="feedback.html#feedback">Send feedback</a></p></div>
       </div>
     </div>
@@ -237,7 +249,7 @@
           <svg class="logo-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path d="M20 3S7 17.5 7 26a13 13 0 0 0 26 0C33 17.5 20 3 20 3Z" fill="#0891B2"/><path d="M13.5 30c0-7.5 5.2-11.6 13-12.5-.9 7.6-5.4 12.5-13 12.5Z" fill="#DCFCE7"/><path d="M13.5 30 21 22.5" stroke="#15803D" stroke-width="1.8" stroke-linecap="round"/></svg>
           <span class="brand__text">GREEN CAMPUS<span>INNOVATION</span></span>
         </a>
-        <p>A water conservation initiative for Valley View University, Ghana, working with Estates and Facilities and the Students' Representative Council.</p>
+        <p>Green Campus Process Innovation by Group 5, Valley View University, Ghana. Focus area: water conservation.</p>
       </div>
       <div>
         <h4>Explore</h4>
@@ -254,13 +266,13 @@
           <li><a href="solution.html#report">Report a problem</a></li>
           <li><a href="feedback.html#pledge">Take the pledge</a></li>
           <li><a href="feedback.html#feedback">Send feedback</a></li>
-          <li><a href="admin/">Team sign in</a></li>
+          <li><a href="feedback.html#contact-title">Contact the team</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-base">
       <span>&copy; <span data-year></span> Green Campus Innovation. WaterWatch is a proposed campus prototype, not an official university system.</span>
-      <span>Personal data is handled in line with Ghana's Data Protection Act, 2012 (Act 843).</span>
+      <span>Submissions are saved only in the browser of the device used. Personal data is handled in line with Ghana's Data Protection Act, 2012 (Act 843).</span>
     </div>
   </div>
 </footer>

@@ -1,9 +1,9 @@
 // Water Reports: filter, search, review, status workflow, assignment, CSV.
 import { esc, icon, fmtDateTime, statusBadge, sevBadge, demoBadge, panel, tableHTML, actionBtn, onActions,
-  selectHTML, formModal, readOnlyNote } from '../ui.js';
+  selectHTML, formModal, readOnlyNote, toLocalInput } from '../ui.js';
 import { emptyHTML, downloadCSV, toast, confirmDialog, openModal } from '../../lib/dom.js';
 import { REPORT_STATUSES, SEVERITIES, ISSUE_TYPES, options, label } from '../../lib/labels.js';
-import { friendlyError } from '../../lib/validate.js';
+import { friendlyError, rules } from '../../lib/validate.js';
 import { actionFields } from './actions.js';
 
 const TEAMS = ['Estates/Facilities', 'Estates/Facilities, Plumbing', "Students' Representative Council", 'Project team'];
@@ -17,7 +17,8 @@ export async function render(ctx) {
   const locName = new Map(locations.map((l) => [l.id, l.name]));
   const where = (r) => locName.get(r.location_id) ?? (r.location_note ? `Not listed: ${r.location_note}` : 'N/A');
   const params = new URLSearchParams(location.hash.split('?')[1] ?? '');
-  const f = { q: params.get('ref') ?? '', status: params.get('status') ?? '', severity: '', issue: '', loc: '' };
+  const f = { q: params.get('ref') ?? '', status: params.get('status') ?? '', severity: '', issue: '', loc: '', from: '', to: '' };
+  const day = (iso) => String(iso ?? '').slice(0, 10);
 
   el.innerHTML = `${can.write ? '' : readOnlyNote()}${panel(`Water reports`, '<div data-table></div>', {
     iconName: 'clipboard',
@@ -26,7 +27,10 @@ export async function render(ctx) {
       ${selectHTML('severity', options(SEVERITIES), '', 'All severities', 'Filter by severity')}
       ${selectHTML('issue', options(ISSUE_TYPES), '', 'All problem types', 'Filter by problem type')}
       ${selectHTML('loc', locations.map((l) => ({ value: l.id, text: l.name })), '', 'All locations', 'Filter by location')}
-      <button type="button" class="btn btn--ghost btn--sm" data-export>${icon('download', 16)}CSV</button>`,
+      <label class="date-filter">From <input type="date" name="from" aria-label="Submitted from"></label>
+      <label class="date-filter">To <input type="date" name="to" aria-label="Submitted to"></label>
+      <button type="button" class="btn btn--ghost btn--sm" data-export>${icon('download', 16)}CSV</button>
+      ${can.write ? `<button type="button" class="btn btn--sm" data-add>${icon('plus', 16)}Add report</button>` : ''}`,
   })}`;
   const tableHost = el.querySelector('[data-table]');
   let visible = [];
@@ -35,6 +39,7 @@ export async function render(ctx) {
     const q = f.q.trim().toLowerCase();
     visible = reports.filter((r) => (!f.status || r.status === f.status) && (!f.severity || r.severity === f.severity)
       && (!f.issue || r.issue_type === f.issue) && (!f.loc || r.location_id === f.loc)
+      && (!f.from || day(r.submitted_at) >= f.from) && (!f.to || day(r.submitted_at) <= f.to)
       && (!q || [r.reference_number, where(r), r.description, r.assigned_to].some((s) => String(s ?? '').toLowerCase().includes(q))));
     tableHost.innerHTML = visible.length ? tableHTML({
       caption: 'Water reports',
@@ -77,6 +82,34 @@ export async function render(ctx) {
   });
   onActions(tableHost, { open: (i) => openReport(visible[i]) });
 
+  // Add or edit the reported details (admin-entered reports, e.g. from a phone call or walk-through).
+  const detailFields = (isNew) => [
+    { name: 'issue_type', label: 'Problem category', type: 'select', required: true, options: options(ISSUE_TYPES), half: true },
+    { name: 'severity', label: 'Severity', type: 'select', required: true, options: options(SEVERITIES), half: true },
+    { name: 'location_id', label: 'Campus location', type: 'select', options: locations.map((l) => ({ value: l.id, text: l.name })), nullable: true, placeholder: 'Not listed' , half: true },
+    { name: 'location_note', label: 'Location note', maxLength: 200, optional: true, half: true, hint: 'Use when the location is not listed.' },
+    { name: 'description', label: 'Description', type: 'textarea', required: true, minLength: 10, maxLength: 2000 },
+    { name: 'observed_at', label: 'Date and time observed', type: 'datetime-local', optional: true, half: true, validate: rules.notFuture() },
+    ...(isNew ? [{ name: 'status', label: 'Status', type: 'select', required: true, options: options(REPORT_STATUSES), half: true },
+      { name: 'assigned_to', label: 'Assigned to', maxLength: 160, list: TEAMS, optional: true }] : []),
+  ];
+  const toRow = (v) => ({ ...v, observed_at: v.observed_at ? new Date(v.observed_at).toISOString() : null, location_id: v.location_id || null });
+  el.querySelector('[data-add]')?.addEventListener('click', () => formModal({
+    title: 'Add water report', wide: true, fields: detailFields(true), submitLabel: 'Add report',
+    values: { severity: 'medium', status: 'submitted' },
+    onSubmit: async (v) => {
+      const rec = await db.insert('water_reports', { ...toRow(v), is_anonymous: true, admin_notes: 'Entered by admin.' });
+      reports.unshift(rec);
+      toast(`Report ${rec.reference_number} added`, 'success');
+      draw(); refreshCounts();
+    },
+  }));
+  const editDetails = (r) => formModal({
+    title: `Edit details of ${r.reference_number}`, wide: true, fields: detailFields(false),
+    values: { ...r, observed_at: toLocalInput(r.observed_at), location_id: r.location_id ?? '' },
+    onSubmit: async (v) => { Object.assign(r, await db.update('water_reports', r.id, toRow(v))); toast('Report updated', 'success'); draw(); },
+  });
+
   async function openReport(r) {
     const photo = r.photo_path ? await db.photoUrl(r.photo_path).catch(() => null) : null;
     const body = document.createElement('div');
@@ -113,7 +146,8 @@ export async function render(ctx) {
         <p class="form-status" data-form-status aria-live="polite"></p>
         <div class="form-actions">
           ${can.admin ? `<button type="button" class="btn btn--ghost" data-delete style="margin-right:auto">${icon('trash', 16)}Delete</button>` : ''}
-          ${can.write ? `<button type="button" class="btn btn--ghost" data-action>${icon('wrench', 16)}Record conservation action</button>
+          ${can.write ? `<button type="button" class="btn btn--ghost" data-edit-details>${icon('edit', 16)}Edit details</button>
+          <button type="button" class="btn btn--ghost" data-action>${icon('wrench', 16)}Record conservation action</button>
           <button type="submit" class="btn">Save changes</button>` : ''}
         </div>
       </form>`;
@@ -134,6 +168,7 @@ export async function render(ctx) {
         m.close(); draw(); refreshCounts();
       } catch (err) { status.className = 'form-status form-status--error'; status.textContent = friendlyError(err); }
     });
+    form.querySelector('[data-edit-details]')?.addEventListener('click', () => { m.close(); editDetails(r); });
     form.querySelector('[data-action]')?.addEventListener('click', () => {
       m.close();
       formModal({

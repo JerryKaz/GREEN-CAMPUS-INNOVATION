@@ -6,12 +6,15 @@ import { icon } from '../lib/icons.js';
 import { budgetTotals, calcSavings, reportBaselineVsPilot } from '../lib/calc.js';
 import { readForm } from '../lib/validate.js';
 import { BUDGET_CATEGORIES, COST_BASIS, label } from '../lib/labels.js';
+import { siteContent, galleryImages } from '../lib/content.js';
+import { renderBeforeAfter } from '../components/gallery.js';
+import { renderVideoSlot } from '../components/video.js';
 
 const { db } = await initLayout();
 const demo = includeDemo();
 
 // ---- settings: roadmap phase + tariff --------------------------------------
-const settings = await db.settings().catch(() => ({}));
+const settings = await siteContent(db).catch(() => ({}));
 const phase = Number(settings.roadmap?.current_phase) || 0;
 document.querySelectorAll('#roadmap li').forEach((li, i) => {
   if (i + 1 < phase) li.classList.add('is-done');
@@ -122,3 +125,30 @@ try {
     });
   }
 } catch { /* calculator still works manually */ }
+
+// ---- baseline vs pilot measurements -------------------------------------------
+(async () => {
+  const host = document.getElementById('results-table');
+  try {
+    const [readings, locations] = await Promise.all([
+      db.list('water_readings', { includeDemo: demo }), db.list('campus_locations', { includeDemo: demo }),
+    ]);
+    const rows = reportBaselineVsPilot(readings, locations);
+    if (rows.some((r) => r.includes_demo)) document.getElementById('results-notice').innerHTML = SAMPLE_CHIP;
+    host.innerHTML = !rows.length ? emptyHTML('Awaiting baseline and pilot readings', 'Measurements appear here as soon as they are recorded.', 'gauge')
+      : `<table class="data"><caption class="sr-only">Baseline versus pilot measurements</caption><thead><tr><th>Location</th><th>Method</th>
+        <th class="num">Baseline L/day</th><th class="num">Days</th><th class="num">Pilot L/day</th><th class="num">Days</th>
+        <th class="num">Saved L/day</th><th class="num">Reduction</th><th>Evidence</th></tr></thead><tbody>
+        ${rows.map((r) => `<tr><td>${esc(r.location_name)} ${demoBadge(r.includes_demo)}</td><td>${esc(r.measurement_method)}</td>
+          <td class="num">${fmtNum(r.baseline_avg_daily_l, 1)}</td><td class="num">${r.baseline_days}</td>
+          <td class="num">${r.pilot_avg_daily_l === null ? 'Not yet' : fmtNum(r.pilot_avg_daily_l, 1)}</td><td class="num">${r.pilot_days}</td>
+          <td class="num">${r.saved_per_day_l === null ? 'N/A' : fmtNum(r.saved_per_day_l, 1)}</td>
+          <td class="num">${r.reduction_pct === null ? 'N/A' : `${fmtNum(r.reduction_pct, 1)}%`}</td>
+          <td>${r.meets_minimum_days ? '<span class="badge badge--verified">≥3 days each phase</span>' : '<span class="badge badge--estimate">Not enough days yet</span>'}</td></tr>`).join('')}
+        </tbody></table>`;
+  } catch (e) { host.innerHTML = errorHTML('Measurements could not be loaded.'); }
+})();
+
+galleryImages(db).then((imgs) => renderBeforeAfter(document.getElementById('before-after'), imgs))
+  .catch(() => renderBeforeAfter(document.getElementById('before-after'), []));
+renderVideoSlot(document.getElementById('impl-video'), db, 'solution-demo');

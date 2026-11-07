@@ -28,7 +28,7 @@ function fieldHTML(f, value) {
     case 'textarea':
       control = `<textarea id="${id}" name="${esc(f.name)}" rows="${f.rows ?? 4}" ${attrs}${desc}>${esc(value ?? '')}</textarea>`; break;
     case 'select':
-      control = `<select id="${id}" name="${esc(f.name)}" ${attrs}${desc}>${optionsHTML(f.options, value, f.placeholder ?? (f.required ? 'Select…' : ',  None , '))}</select>`; break;
+      control = `<select id="${id}" name="${esc(f.name)}" ${attrs}${desc}>${optionsHTML(f.options, value, f.placeholder ?? (f.required ? 'Select…' : 'None'))}</select>`; break;
     case 'checkbox':
       return `<div class="field ${f.full ? 'field--full' : ''}"><label class="check"><input type="checkbox" name="${esc(f.name)}" ${value ? 'checked' : ''}>${esc(f.label)}</label>${hint}${err}</div>`;
     case 'file':

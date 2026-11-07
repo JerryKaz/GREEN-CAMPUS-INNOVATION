@@ -5,17 +5,20 @@ import { friendlyError } from '../../lib/validate.js';
 
 export async function render({ db, el, can, refreshCounts }) {
   const items = await db.list('feedback', { order: ['submitted_at', 'desc'] });
-  const f = { status: '', category: '' };
+  const f = { status: '', category: '', q: '', from: '', to: '' };
   let visible = [];
   el.innerHTML = panel('Feedback', '<div data-table></div>', {
     iconName: 'message',
-    tools: `${selectHTML('status', options(FEEDBACK_STATUSES), '', 'All statuses', 'Filter by status')}
+    tools: `<input type="search" name="q" placeholder="Search" aria-label="Search">
+      <label class="date-filter">From <input type="date" name="from" aria-label="From date"></label>
+      <label class="date-filter">To <input type="date" name="to" aria-label="To date"></label>
+      ${selectHTML('status', options(FEEDBACK_STATUSES), '', 'All statuses', 'Filter by status')}
       ${selectHTML('category', options(FEEDBACK_CATEGORIES), '', 'All categories', 'Filter by category')}
       <button type="button" class="btn btn--ghost btn--sm" data-export>${icon('download', 16)}CSV</button>`,
   });
   const host = el.querySelector('[data-table]');
   const draw = () => {
-    visible = items.filter((x) => (!f.status || x.status === f.status) && (!f.category || x.category === f.category));
+    visible = items.filter((x) => (!f.status || x.status === f.status) && (!f.category || x.category === f.category) && (!f.q || [x.message, x.contact_name, x.contact_email].some((s) => String(s ?? '').toLowerCase().includes(f.q.trim().toLowerCase()))) && (!f.from || String(x.submitted_at).slice(0, 10) >= f.from) && (!f.to || String(x.submitted_at).slice(0, 10) <= f.to));
     host.innerHTML = visible.length ? tableHTML({
       caption: 'Feedback messages',
       columns: [
@@ -29,7 +32,7 @@ export async function render({ db, el, can, refreshCounts }) {
       actions: (x, i) => `${actionBtn('open', i, 'edit', 'Open message')}${can.admin ? actionBtn('del', i, 'trash', 'Delete message', true) : ''}`,
     }) : emptyHTML('No feedback', 'Messages from the public Feedback page appear here.', 'message');
   };
-  el.querySelector('.toolbar').addEventListener('change', (e) => { if (e.target.name in f) { f[e.target.name] = e.target.value; draw(); } });
+  el.querySelector('.toolbar').addEventListener('input', (e) => { if (e.target.name in f) { f[e.target.name] = e.target.value; draw(); } });
   el.querySelector('[data-export]').addEventListener('click', () => downloadCSV('feedback.csv', visible, [
     { label: 'Received', key: 'submitted_at' }, { label: 'Category', value: (x) => label(FEEDBACK_CATEGORIES, x.category) },
     { label: 'Message', key: 'message' }, { label: 'Name', key: 'contact_name' }, { label: 'Email', key: 'contact_email' },

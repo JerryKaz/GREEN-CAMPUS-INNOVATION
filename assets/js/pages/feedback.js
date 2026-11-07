@@ -3,6 +3,7 @@ import { esc } from '../lib/dom.js';
 import { icon } from '../lib/icons.js';
 import { bindForm, rules } from '../lib/validate.js';
 import { COMMITMENTS, FEEDBACK_CATEGORIES } from '../lib/labels.js';
+import { siteContent } from '../lib/content.js';
 
 const { db } = await initLayout();
 
@@ -33,7 +34,7 @@ bindForm(pledgeForm, {
   consent_status: [rules.isTrue('Please give consent so we can store your pledge.')],
 }, async (v) => {
   await db.submitPledge(v);
-  success(pledgeForm, 'Thank you for your pledge!', 'Every commitment counts. Share the pledge with friends to multiply the impact.');
+  success(pledgeForm, 'Thank you for your pledge!', 'Your pledge has been saved on this device. Every commitment counts: share the pledge with friends to multiply the impact.');
 });
 
 const feedbackForm = document.getElementById('feedback-form');
@@ -45,7 +46,21 @@ bindForm(feedbackForm, {
   consent_status: [rules.isTrue('Please give consent so we can store your feedback.')],
 }, async (v) => {
   await db.submitFeedback(v);
-  success(feedbackForm, 'Feedback received, thank you', 'The project team reviews all feedback and uses it to improve WaterWatch.');
+  success(feedbackForm, 'Feedback saved, thank you', 'Your message has been saved on this device for the project team to review. It has not been sent to a server.');
 });
 
 if (location.hash === '#pledge') document.getElementById('pledge').querySelector('input')?.focus({ preventScroll: true });
+
+// ---- contact details (editable placeholders: public/data/site-content.json) ----
+siteContent(db).then(({ contact = {} }) => {
+  const row = (ic, title, value, placeholder, href) => `<li>${icon(ic, 18)}<span><strong>${esc(title)}:</strong> ${value
+    ? (href ? `<a href="${esc(href)}">${esc(value)}</a>` : esc(value))
+    : `<span class="placeholder-text">${esc(placeholder)}</span>`}</span></li>`;
+  document.getElementById('contact-details').innerHTML = [
+    row('mail', 'Email', contact.email, '[Project email to be added]', contact.email ? `mailto:${contact.email}` : ''),
+    row('phone', 'Phone', contact.phone, '[Phone number to be added]', contact.phone ? `tel:${contact.phone.replace(/\s+/g, '')}` : ''),
+    row('pin', 'Office', contact.office, '[Location to be added]'),
+    row('flask', 'Course / supervisor', contact.supervisor, '[Course and supervisor to be added]'),
+    row('users', 'Group 5 members', contact.team ? contact.team.split(/\n+/).map((x) => x.trim()).filter(Boolean).join(', ') : '', '[Member names to be added, if the group chooses to publish them]'),
+  ].join('');
+}).catch(() => { document.getElementById('contact-details').innerHTML = '<li class="muted">Contact details could not be loaded.</li>'; });

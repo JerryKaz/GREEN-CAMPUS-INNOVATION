@@ -60,9 +60,10 @@ export async function initReportForm(form, db) {
   bindForm(form, schema, async (v) => {
     let photo = null;
     if (v.photo) {
-      const blob = await compressImage(v.photo, 1600, 0.8);
-      if (blob.size > 5 * 1024 * 1024) throw new Error('Photo is too large even after compression. Try a smaller image.');
-      photo = db.mode === 'demo' ? await blobToDataURL(await compressImage(v.photo, 900, 0.7)) : blob;
+      // Resized and re-encoded (which also strips GPS metadata), then stored with the report on this device.
+      const blob = await compressImage(v.photo, 1200, 0.75);
+      if (blob.size > 3 * 1024 * 1024) throw new Error('Photo is too large even after compression. Try a smaller image.');
+      photo = await blobToDataURL(blob);
     }
     const payload = { ...v, location_id: v.location_id === '__other' ? null : v.location_id,
       location_note: v.location_id === '__other' ? v.location_note : '' };
@@ -76,8 +77,8 @@ function showSuccess(form, reference) {
   panel.className = 'success-panel';
   panel.setAttribute('tabindex', '-1');
   panel.innerHTML = `<span class="success-icon">${icon('checkCircle', 32)}</span>
-    <h3>Report received, thank you</h3>
-    <p class="muted">Keep this reference number. Estates/Facilities will use it to review and track the problem.</p>
+    <h3>Report saved, thank you</h3>
+    <p class="muted">Keep this reference number to follow the report on this device. In this prototype the report is stored in this browser only and has <strong>not</strong> been sent to a central server or to Estates/Facilities.</p>
     <div class="ref" aria-label="Reference number">${esc(reference)}</div>
     <div class="btn-row" style="justify-content:center">
       <button type="button" class="btn btn--ghost" data-copy>${icon('clipboard', 18)} Copy reference</button>

@@ -73,12 +73,23 @@
       <div class="section-head">
         <h2 id="findings-title">What the research shows</h2>
         <p class="lead">Findings are published section by section once they have been verified in the field.</p>
+        <p class="small muted">Labels used on this page: <span class="badge badge--verified">Verified finding</span> = published by the group from its own fieldwork. <span class="badge badge--demo">DEMO</span> = demonstration record, not research.</p>
       </div>
       <div class="findings" id="findings"></div>
     </div>
   </section>
 
-  <section class="section section--white" aria-labelledby="baseline-title">
+  <section class="section section--white" aria-labelledby="fieldwork-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="fieldwork-title">Observations and interviews</h2>
+        <p class="lead">Baseline observations over at least three days, and interviews with Estates/Facilities staff and at least five students.</p>
+      </div>
+      <div class="grid grid--3" id="fieldwork"></div>
+      <div id="interview-videos" hidden></div>
+    </div>
+  </section>
+  <section class="section section--mist" aria-labelledby="baseline-title">
     <div class="container">
       <div class="section-head">
         <h2 id="baseline-title">Water consumption dashboard</h2>
@@ -102,23 +113,24 @@
     </div>
   </section>
 
-  <section class="section section--mist" aria-labelledby="map-title">
+  <section class="section section--white" aria-labelledby="map-title">
     <div class="container">
       <div class="section-head">
         <h2 id="map-title">Campus water hotspot map</h2>
         <p class="muted">Markers appear only for locations an administrator has added with coordinates. Report descriptions and reporter details are never shown publicly.</p>
       </div>
       <div id="map-notice"></div>
+      <p class="small muted">Sample markers are placed around a placeholder map centre and are labelled DEMO. They are not real campus water hotspots.</p>
       <div class="map" id="hotspot-map" role="region" aria-label="Interactive map of reported water problems"></div>
       <div id="map-legend"></div>
     </div>
   </section>
 
-  <section class="section section--white" aria-labelledby="gallery-title">
+  <section class="section section--mist" aria-labelledby="gallery-title">
     <div class="container">
       <div class="section-head">
         <h2 id="gallery-title">Research photo gallery</h2>
-        <p class="lead">Original photographs from the project, each with its caption, date, time, location and description.</p>
+        <p class="lead">Original photographs from the project, each with its title, caption, date and location.</p>
       </div>
       <div class="filters" id="gallery-filters" role="toolbar" aria-label="Filter photos by category"></div>
       <div id="gallery"></div>
@@ -131,7 +143,7 @@
         <h2 id="video1-title">Seeing the problem on campus</h2>
         <p class="lead">A short documentary of the campus water problem: observations, interviews and the everyday experiences of students and staff.</p>
       </div>
-      <div id="video-problem"></div>
+      <div><div id="video-problem"></div><p class="small" data-video-caption style="color:#DCFCE7;margin-top:10px"></p></div>
     </div>
   </section>
 </main>
@@ -152,7 +164,7 @@
           <svg class="logo-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><path d="M20 3S7 17.5 7 26a13 13 0 0 0 26 0C33 17.5 20 3 20 3Z" fill="#0891B2"/><path d="M13.5 30c0-7.5 5.2-11.6 13-12.5-.9 7.6-5.4 12.5-13 12.5Z" fill="#DCFCE7"/><path d="M13.5 30 21 22.5" stroke="#15803D" stroke-width="1.8" stroke-linecap="round"/></svg>
           <span class="brand__text">GREEN CAMPUS<span>INNOVATION</span></span>
         </a>
-        <p>A water conservation initiative for Valley View University, Ghana, working with Estates and Facilities and the Students' Representative Council.</p>
+        <p>Green Campus Process Innovation by Group 5, Valley View University, Ghana. Focus area: water conservation.</p>
       </div>
       <div>
         <h4>Explore</h4>
@@ -169,13 +181,13 @@
           <li><a href="solution.html#report">Report a problem</a></li>
           <li><a href="feedback.html#pledge">Take the pledge</a></li>
           <li><a href="feedback.html#feedback">Send feedback</a></li>
-          <li><a href="admin/">Team sign in</a></li>
+          <li><a href="feedback.html#contact-title">Contact the team</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-base">
       <span>&copy; <span data-year></span> Green Campus Innovation. WaterWatch is a proposed campus prototype, not an official university system.</span>
-      <span>Personal data is handled in line with Ghana's Data Protection Act, 2012 (Act 843).</span>
+      <span>Submissions are saved only in the browser of the device used. Personal data is handled in line with Ghana's Data Protection Act, 2012 (Act 843).</span>
     </div>
   </div>
 </footer>
